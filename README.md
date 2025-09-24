@@ -53,7 +53,7 @@ pip install -r requirementsANAM.txt
 python manage.py migrate
 
 # Collect static files (optional, for production)
-# python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 
 # Create superuser (interactive)
 python manage.py createsuperuser
