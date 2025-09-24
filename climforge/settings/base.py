@@ -184,9 +184,9 @@ DATABASES = {
     "default":{
         # 'ENGINE': 'django.db.backends.postgresql',
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'climforge',
-        'USER': 'user',
-        'PASSWORD': 'xB9#qT7!vLz@W2pM',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
