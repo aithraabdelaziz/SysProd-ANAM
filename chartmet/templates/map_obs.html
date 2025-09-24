@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Carte du Temps Sensible du <span class="content-heading-color">{{ date_obs }}</span></h1>
+
+    <!-- Boutons pour basculer entre les cartes -->
+    <div class="mb-3">
+        <button id="interactiveMapBtn" class="btn btn-primary" onclick="showInteractiveMap()">Carte Interactive</button>
+        <button id="staticMapBtn" class="btn btn-secondary" onclick="showStaticMap()">Carte Statique</button>
+    </div>
+
+    <!-- Carte interactive - cachée au départ -->
+    <div id="interactiveMap" class="map-container d-none">
+        <h3>Carte Interactive</h3>
+        {{ map | safe }}
+    </div>
+
+    <!-- Carte PNG statique -->
+    <div id="staticMap" class="map-container"  style="max-width: 800px; margin: 0 auto;">
+        <h3>Carte PNG</h3>
+        <img src="{{ png }}" alt="Carte PNG du Temps Sensible" class="img-fluid">
+    </div>
+</div>
+
+<!-- Script JavaScript pour basculer entre les cartes -->
+<script>
+    function showInteractiveMap() {
+        document.getElementById("interactiveMap").classList.remove("d-none");
+        document.getElementById("staticMap").classList.add("d-none");
+        document.getElementById("interactiveMapBtn").classList.add("btn-primary");
+        document.getElementById("interactiveMapBtn").classList.remove("btn-secondary");
+        document.getElementById("staticMapBtn").classList.add("btn-secondary");
+        document.getElementById("staticMapBtn").classList.remove("btn-primary");
+    }
+
+    function showStaticMap() {
+        document.getElementById("interactiveMap").classList.add("d-none");
+        document.getElementById("staticMap").classList.remove("d-none");
+        document.getElementById("staticMapBtn").classList.add("btn-primary");
+        document.getElementById("staticMapBtn").classList.remove("btn-secondary");
+        document.getElementById("interactiveMapBtn").classList.add("btn-secondary");
+        document.getElementById("interactiveMapBtn").classList.remove("btn-primary");
+    }
+</script>
+
+{% endblock %}

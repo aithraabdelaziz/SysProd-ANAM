@@ -1,0 +1,19 @@
+{% load static %}
+{% load wagtailusers_tags %}
+{% load wagtailsettings_tags wagtailimages_tags %}
+{% get_settings %}
+	<div class="navbar-brand">
+		<a style="text-decoration:None" href="{% url 'home' %}">
+		    {% if settings.administrate.OrganisationSetting.favicon %}
+	          {% image settings.administrate.OrganisationSetting.favicon width-40 height-40 alt="Favicon" %}
+	        {% endif %}
+		</a>
+		<a style="text-decoration:None" href="#" target='_blank'>
+		    {% if settings.administrate.OrganisationSetting.site_logo %}
+	          {% image settings.administrate.OrganisationSetting.site_logo width-120 height-40 alt="Site logo" class="me-2" %}
+	        {% endif %}
+		</a>
+		<!-- <a style="text-decoration:None"  href="#" target='_blank'>
+		    <img src="{% static 'images/logo2.png' %}" width="40" height="40" alt="logo2">
+		</a> -->
+	</div>

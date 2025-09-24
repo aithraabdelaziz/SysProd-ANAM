@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+ 
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h4>Sélectionner un fichier Shapefile : </h4>
+        {{ form }} 
+     
+     
+        <button type="submit" name="action" value="upload">Afficher Attributs</button>
+    
+    {% if attribut_columns %}
+        <!-- <h4>{{shapefile}}</h4> -->
+        <h4>choisissez le nom parmi les attributs  :</h4>
+        <select name="selected_attribute">
+            <option value="aucun">aucun</option>
+            {% for column in attribut_columns %}
+                <option value="{{ column }}">{{ column }}</option>
+            {% endfor %}
+        </select>
+
+        {% if category_choices %}
+        <h4> Catégories : </h4>
+        <select name="selected_category">
+            {% for category in category_choices %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        {% if rayon %}
+            <h4> Rayon : </h4>
+            <input name="rayon" value="{{ rayon }}" min="0">
+        {% endif %}
+        <button type="submit" name="action" value="save">Enregistrer</button>
+  
+     
+    {% endif %}
+    </form>
+    
+
+
+{% endblock content %}

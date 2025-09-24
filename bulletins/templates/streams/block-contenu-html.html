@@ -1,0 +1,7 @@
+{% load dict_extras %}
+{% load static %}
+
+   <h3 style="{{ctx.style.title }}">{{ value.title }} </h3>
+    {{ ctx.contenu | safe}}
+
+    {% if ctx.AnnexText %}<span style="font-size: 10px" >{{ ctx.AnnexText  | safe }}</span>{% endif %}   

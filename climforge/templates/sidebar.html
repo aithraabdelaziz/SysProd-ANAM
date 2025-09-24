@@ -1,0 +1,176 @@
+{% load static %}
+{% load wagtailusers_tags %}
+{% load wagtailsettings_tags wagtailimages_tags %}
+{% get_settings %}
+
+
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<div class="sidebar-wrapper">
+  <div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-primary text-white">
+    <!-- Header avec logo et bouton de fermeture -->
+    <div class="sidebar-header d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center">
+        {% if settings.administrate.OrganisationSetting.site_logo %}
+          {% image settings.administrate.OrganisationSetting.site_logo width-40 height-40 alt="Site logo" class="me-2" %}
+        {% endif %}
+
+        {% if settings.administrate.OrganisationSetting.favicon %}
+          {% image settings.administrate.OrganisationSetting.favicon width-40 height-40 alt="Favicon" %}
+        {% endif %}
+        <span class="fs-5">{% if settings.administrate.OrganisationSetting.name_site %}
+          {{settings.administrate.OrganisationSetting.name_site }}
+        {% endif %}</span>
+      </div>
+      <button class="btn-close btn-close-white" id="sidebarClose"></button>
+    </div>
+    <hr>
+    
+    <ul class="nav nav-pills flex-column mb-auto">
+      <!-- Items de menu comme avant... -->
+      <li class="nav-item">
+        <a href="{% url 'home:home' %}" class="nav-link text-white"  data-menu="home">
+          <i class="bi bi-house-door-fill me-2"></i>
+          Accueil
+        </a>
+      </li>
+      {% if not user.is_authenticated %}
+      <li class="nav-item">
+          <a href="{% url 'login' %}" class="nav-link text-white"  data-menu="prevision">Se connecter</a>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <li>
+        <a href="{% url 'forecast:edition_index' %}" class="nav-link text-white"  data-menu="prevision">
+          <i class="bi bi-cloud-sun-fill me-2"></i>
+          Prévision
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'observation:edition_index' %}"class="nav-link text-white"  data-menu="observation">
+          <i class="bi bi-eye-fill me-2"></i>
+          Observation
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'chartmet:index_climat' %}" class="nav-link text-white" data-menu="climatologie">
+          <i class="bi bi-bar-chart-line-fill me-2"></i> 
+          Climatologie
+        </a>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated %}
+      <li>
+        <a class="nav-link text-white collapsed" data-bs-toggle="collapse" href="#diffusion-collapse"  data-menu="diffusion">
+          <i class="bi bi-gear-wide-connected me-2"></i>Production
+          
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <div class="collapse" id="diffusion-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li>
+              <a href="{% url 'bulletins:bulletin_list' %}" class="nav-link text-white"  data-menu="generation"><i class="bi bi-newspaper me-2"></i>Génération bulletins</a>
+            </li>
+            <li><a href="{% url 'vigilance:vigilance_map' %}" class="nav-link text-white" data-menu="gene"><i class="bi bi-exclamation-triangle-fill me-2"></i> Vigilance</a></li>
+            <li><a href="{% url 'dissiminate:diffusion' %}" class="nav-link text-white" data-menu="diff"><i class="bi bi-send-fill me-2"></i>Diffusion</a></li>
+            {% if user.is_authenticated and user.is_staff %}
+            <li><a href="{% url 'dissiminate:transmission_history' %}" class="nav-link text-white" data-menu="hist"><i class="bi bi-send-check me-2"></i>Historique diffusion</a></li>
+            {% endif %}
+            <li><hr class="dropdown-divider"></li>
+          </ul>
+        </div>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated %} <!-- and user.is_staff -->
+      <li>
+        <a class="nav-link text-white collapsed" data-bs-toggle="collapse" href="#config-collapse"  data-menu="configuration">
+          <i class="bi bi-sliders2-vertical me-2"></i>
+          Configuration
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <div class="collapse" id="config-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="{% url 'forecast:manage_variables' %}" class="nav-link text-white" data-menu="params"><i class="bi bi-thermometer-sun me-2"></i> Variables Météo</a></li>
+            <li><a href="{% url 'forecast:georaphic_area_list' %}" class="nav-link text-white" data-menu="zones"><i class="bi bi-map-fill me-2"></i> Zone de prévision</a></li>
+            <li><a href="/admin/snippets/observation/station/" class="nav-link text-white" data-menu="station"><i class="bi bi-geo-alt-fill me-2"></i> Stations</a></li>
+            <li><a href="/admin/snippets/bulletins/echeance/" class="nav-link text-white" data-menu="eche"><i class="bi bi-clock-fill me-2"></i> Echéances</a></li>
+            <li><a href="/admin/snippets/bulletins/bulletintemplate" class="nav-link text-white" data-menu="bulprod"><i class="bi bi-journal-text me-2"></i> Bulletins & Produits</a></li>
+            <li><a href="{% url 'chartmet:manage_legends' %}" class="nav-link text-white" data-menu="legendmng"><i class="bi bi-palette-fill me-2"></i> Légendes cartes</a></li>
+          </ul>
+        </div>
+      </li>
+      {% endif %}
+      {% if user.is_authenticated %} <!-- and user.is_staff -->
+      <li>
+        <a href="{% url 'wagtailadmin_home' %}" class="nav-link text-white"  data-menu="admin">
+          <i class="bi bi-gear-fill me-2"></i><i class="bi bi-tools me-2"></i>
+          Administration
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+    <hr>
+    <div class="dropdown">
+      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+        <img src="{% static 'images/user.png' %}" alt="User" width="32" height="32" class="rounded-circle me-2">
+        {% if user.is_authenticated %}
+          <strong>{{ request.user }}</strong>
+        {% else %}
+          <strong>Invite</strong>
+        {% endif %}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+
+        {% if user.is_authenticated %}
+            <!-- Menu connecté -->
+            <li><form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item logout-link">Déconnexion</button>
+            </form></li>
+        {% else %}
+            <!-- Menu invité -->
+            <li><a class="dropdown-item" href="{% url 'login' %}" class="login-link">Connexion</a></li>
+        {% endif %}
+      </ul>
+
+    </div>
+    <hr>
+    <a href="{% url 'api:swagger-ui' %}"
+       target="_blank" 
+       class="btn btn-dark d-inline-flex align-items-center gap-2"
+       title="Documentation API">
+       <span style="color: #85EA2D; font-size: 1.2rem;">{ }</span>
+       <span>API Docs</span>
+    </a>
+  </div>
+</div>
+<!-- Bouton pour afficher la sidebar quand elle est cachée -->
+<div class="sidebar-toggle-btn" id="sidebarToggle">
+  <i class="bi bi-list"></i>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const activeMenu = localStorage.getItem("activeMenu");
+
+    // Appliquer la classe active sur le lien ou sous-lien correspondant
+    document.querySelectorAll(".sidebar .nav-link").forEach(link => {
+      link.classList.remove("active");
+      if (link.dataset.menu === activeMenu) {
+        link.classList.add("active");
+        // Ouvre le parent collapse si c'est un sous-lien
+        const collapseParent = link.closest(".collapse");
+        if (collapseParent) {
+          new bootstrap.Collapse(collapseParent, { toggle: false }).show();
+        }
+      }
+
+      link.addEventListener("click", function () {
+        localStorage.setItem("activeMenu", this.dataset.menu);
+      });
+    });
+  });
+</script>
+

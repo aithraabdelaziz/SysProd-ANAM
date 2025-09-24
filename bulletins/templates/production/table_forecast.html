@@ -1,0 +1,321 @@
+{% load wagtailcore_tags %}
+{% load custom_tags %}
+{% load static %}
+
+{% load wagtailusers_tags %}
+{% load wagtailsettings_tags wagtailimages_tags %}
+{% get_settings %}
+<head><meta charset="UTF-8"></head>
+<style>
+    
+    @page {
+        size: A4 portrait;
+        margin: 1.5cm 1cm 1.5cm 1.5cm;
+    }
+   
+
+    @page:first {
+        margin-top: 150px;
+        @top-center {
+            content: element(header);
+        }
+    }
+
+    #footer {
+        position: running(footer);
+    }
+
+    @page {
+        margin-bottom: 100px;
+
+        @bottom-center {
+            content: element(footer);
+        }
+        @bottom-center {
+            content: element(footer);
+        }
+        @bottom-right {
+            content: "Page " counter(page) " / " counter(pages);
+            font-size: 9pt;
+            color: #555;
+        }
+    }
+
+    body {
+        font-family: "Arial", sans-serif;
+        font-size: 11pt;
+        margin: 0;
+        padding: 0;
+    }
+
+    .center-text {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .page-number {
+        position: running(pageFooter);
+        font-size: 9pt;
+        color: #555;
+        text-align: right;
+    }
+
+    .header, .footer {
+        width: 100%;
+        text-align: center;
+        z-index: 0;
+    }
+
+    .header img, .footer img {
+        max-width: 100%;
+        margin-bottom: 0;
+        z-index: 0;
+    }
+
+    .header-text {
+        margin: 2px 0 5px 0;
+        font-size: 10pt;
+        text-align: left;
+    }
+
+    #header {
+        position: running(header);
+        padding: 0 20px;
+        box-sizing: border-box;
+        z-index: 0;
+    }
+
+    .streamfield-content {
+        display: block;
+    }
+
+    .streamfield-content.two-columns {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .stream-block {
+        display: block;
+        width: 100%;
+        clear: both;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .stream-block::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .tmax { color: red; }
+    .tmin { color: blue; }
+
+    .forecast-container {
+        display: flex;
+        justify-content: center;
+        /*margin: 20px 0;*/
+    }
+
+    .forecast-table {
+        border-collapse: collapse;
+        width: auto;
+        margin: 0 auto;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .forecast-table caption {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .forecast-table th,
+    .forecast-table td,
+    th, td {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .forecast-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    .forecast-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .forecast-table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .block-forecast-table table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .block-forecast-table th {
+        background-color: #e0e0e0;
+        font-weight: bold;
+    }
+
+    .parameter-col {
+        text-align: left;
+        background-color: #f9f9f9;
+    }
+
+    .echeance-col {
+        min-width: 90px;
+    }
+
+    .weather_icon {
+        width: 20%;
+    }
+    .footer-text{
+        font-weight: normal;
+        font-size: 12px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    figcaption{
+        font-size: 9px;
+        text-align: left; 
+        font-style: italic;
+    }
+
+
+    .streamfield-content,
+    .stream-block {
+        margin: 0;
+        padding: 0;
+    }
+
+    .stream-block > * {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .streamfield-content p,
+    .streamfield-content h1,
+    .streamfield-content h2,
+    .streamfield-content h3,
+    .streamfield-content h4,
+    .streamfield-content h5,
+    .streamfield-content h6,
+    .streamfield-content ul,
+    .streamfield-content ol,
+    .streamfield-content table,
+    .streamfield-content img,
+    .streamfield-content figure,
+    .streamfield-content blockquote {
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 0;
+    }
+</style>
+
+
+{% if object.style_bulletin %}
+    {{ object.style_bulletin.generate_style_tag|safe }}
+{% endif %}
+<header id='header'>
+    <div class="header">
+
+        {% if not object.header_image and not object.header_text %}
+            {% if settings.administrate.OrganisationSetting.header_image_bulletin %}
+                <div>
+                  {% image settings.administrate.OrganisationSetting.header_image_bulletin max-1500x250 alt="Header Image" %}
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if object.header_image %}
+        <div>
+            <img src="{{ object.header_image.url }}" alt="Header Image">
+        </div>        
+        {% endif %}
+        {% if object.header_text %}
+        <div class='header-text'>
+            <p>{{ object.header_text  | safe  }}</p>
+        </div>
+        {% endif %}
+    </div>
+</header>
+<div class="page-frame" id="bulletinContent">
+    
+    
+    <div class="content">
+        <div class="center-text">
+            <h3 style="margin-bottom: 0.2em;">{{ object.bulletin_title }}</h3>
+            {% if object.subtitle %}<p style="margin-top: 0.2em;">{{ object.subtitle }}</p>{% endif %}
+            <p>Etabli le : <strong>{{ object.established_date | date:"d F Y" }}</strong></p>
+        </div>
+
+        {% if object.content %}
+        <div class="streamfield-content  {% if object.style_bulletin and  object.style_bulletin.twoColumns %}two-columns{% endif %}">
+            {% for block in object.content %}
+                  {% with ctx=block_contexts|getV:block.id %}
+                    <div class="stream-block">
+                        {% include_block block %}
+                    </div>
+                  {% endwith %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if object.body %}
+        <div class="streamfield-content">
+            {% for block in object.body %}{% include_block block %}{% endfor %}
+        </div> 
+        {% endif %}
+    </div>
+
+</div>
+
+<footer id='footer'>
+    <div class="footer">
+        {% if object.footer_text %}
+        <div class="footer-text">
+            <p>{{ object.footer_text  | safe   }}</p>
+        </div>
+        {% endif %}
+        {% if object.footer_image %}
+        <img src="{{ object.footer_image.url }}" alt="Footer Image">
+        {% endif %}
+
+        {% if not object.footer_text and not object.footer_image %}
+            {% if settings.administrate.OrganisationSetting.footer_image_bulletin %}
+                <div>
+                  {% image settings.administrate.OrganisationSetting.footer_image_bulletin max-1500x250 alt="Header Image" %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+    
+</footer>
+
+
+<script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+<script>
+  tinymce.init({
+    selector: 'textarea.rich-text-editor',
+    plugins: 'lists link image',
+    toolbar: 'bold italic | bullist numlist | link',
+    menubar: true,
+    statusbar: true,
+    height: 300,
+    skin: 'oxide',
+    content_css: 'default',
+    branding: false,
+    cloudChannel: '', 
+  });
+</script>

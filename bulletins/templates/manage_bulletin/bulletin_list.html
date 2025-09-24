@@ -1,0 +1,71 @@
+{% load custom_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Bulletin Météo</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bulletin Météo</h1>
+  
+  <!-- Tableau des données météo par zone -->
+  <table>
+    <thead>
+      <tr>
+        <th>Zone</th> <!-- Nom de la zone -->
+        <th>Phénomène</th> <!-- Phénomène -->
+        <th>Échéance 0</th> <!-- Première échéance -->
+        <th>Échéance 6</th> <!-- Deuxième échéance -->
+        <th>Échéance 12</th> <!-- Troisième échéance -->
+        <th>Échéance 24</th> <!-- Quatrième échéance -->
+        <th>Échéance 30</th> <!-- Cinquième échéance -->
+        <th>Échéance 36</th> <!-- Sixième échéance -->
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Parcourir les zones -->
+      {% for zone, phenomenes in bulletins_par_zone.items %}
+      <!-- Parcourir les phénomènes pour chaque zone -->
+      {% for phenomene, echeances in phenomenes.items %}
+      <tr>
+        <!-- Afficher la zone seulement pour le premier phénomène -->
+        {% if forloop.first %}
+          <td rowspan="{{ phenomenes|length }}">{{ zone }}</td>
+        {% endif %}
+
+        <!-- Afficher le nom du phénomène -->
+        <td>{{ phenomene }}</td>
+
+        <!-- Afficher les valeurs pour chaque échéance -->
+        <!-- {% with ech=0 %} -->
+        
+        {% for echeance in echeances|get_item:echeance %}
+          <td>
+            <!-- {% if echeance in echeances %} -->
+              {% for val in echeances|get_item:valeur %}
+                {{ val}} <!-- Afficher la valeur correspondante -->
+              {% endfor %}
+            <!-- {% else %} -->
+              - <!-- Indique qu'il n'y a pas de donnée pour cette échéance -->
+            <!-- {% endif %} -->
+          </td>
+        {% endfor %}
+        <!-- {% endwith %} -->
+      </tr>
+      {% endfor %}
+      {% endfor %}
+    </tbody>
+  </table>
+
+</body>
+</html>

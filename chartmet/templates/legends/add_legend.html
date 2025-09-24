@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if legend %}
+  <h1> Modification de la légende : <span class="text-primary">{{ legend }}</span> </h1>
+{% else %}
+  <h1>Ajouter une légende</h1>
+{% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {# form.as_p #}
+         {% for field in form %}
+            <div>
+                
+                  {% if field.label == 'Descriptions' %}
+                  <!-- <label for="{{ field.id_for_label }}"> {{ field.label }}</label> : {{ field }}<br> -->
+                 
+                    {% for k, item  in descriptions.items %}
+                      {% for class, desc  in item.items %}
+                        <div id="legend_{{ k }}">
+                          <label>Classe</label> : <input type="text" name="classe_{{ k }}" id="classe_{{ k }}"  value="{{ class }}">
+                          <label>Description</label> : <input type="text" name="desc_{{ k }}" id="desc_{{ k }}" value="{{ desc.description }}">
+                          <label>Couleur</label> : <input type="color" name="color_{{ k }}" id="color_{{ k }}" value="{{ desc.color }}"> <br>
+                        </div>
+                      {% endfor %}
+                    {% endfor %}
+                    <button type="button" class="btn btn-outline-info" onclick="add_line()">+</button>
+                    <button type="button" class="btn btn-outline-danger" onclick="del_line()">-</button>
+                  {% else %}
+                    <label for="{{ field.id_for_label }}"> {{ field.label }}</label> : {{ field }}
+                  {% endif %}
+                {% if field.errors %}
+                    <span style="color: red;">{{ field.errors|striptags }}</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if legend %}
+          <input type="submit" value="Modifier Légende">
+        {% else %}
+          <input type="submit" value="Ajouter Légende">
+        {% endif %}
+       
+    </form>
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    for(var i=0;i<=101;i++){
+      var div = document.getElementById('legend_'+i);
+      var clas = document.getElementById('classe_'+i);
+      var desc = document.getElementById('desc_'+i);
+      if(desc && desc.value == ''){div.style.display='none';}
+    }
+    function add_line(){
+      for(var i=0;i<=101;i++){
+        var div = document.getElementById('legend_'+i);
+        if(div){
+          if(div.style.display == 'none'){
+            console.log(div);
+            div.style.display = 'block';break;
+          }
+        }        
+      }
+    }
+    function del_line(){
+      for(var i=101;i>0;i--){
+        var div = document.getElementById('legend_'+i);
+        if(div){
+          if(div.style.display == 'block'){
+            div.style.display = 'none';break;
+          }
+        }
+      }
+    }
+
+  </script>
+{% endblock %}

@@ -1,0 +1,85 @@
+.helptext
+{
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: var(--bs-secondary-color);
+  --bs-text-opacity: 1;
+  color: var(--bs-secondary-color) !important;
+  display: block;
+}
+.errorlist
+{
+	color: var(--bs-danger) !important;
+}
+
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.sidebar .nav-link {
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+.collapse.show {
+    padding-left: 15px;
+}
+
+.main-content {
+    transition: all 0.3s;
+}
+
+/* Style pour l'en-tête de la sidebar */
+.sidebar-header {
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+
+/* Amélioration de l'apparence des items */
+.nav-link {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link i {
+    min-width: 24px;
+    text-align: center;
+}
+
+/* Animation douce pour les sous-menus */
+.collapse {
+    transition: all 0.3s ease;
+}
+
+/* Style pour le bouton toggle */
+.sidebar-toggle-btn:hover {
+    background-color: var(--bs-primary-dark);
+    transform: scale(1.05);
+}
+
+.sidebar-toggle-btn:active {
+    transform: scale(0.95);
+}

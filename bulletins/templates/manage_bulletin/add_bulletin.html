@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load widget_tweaks static wagtailcore_tags %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    {% if bulletin %}
+                        <h2 class="h4 mb-0">Modification du bulletin : <strong>{{ bulletin.name }}</strong></h2>
+                    {% else %}
+                        <h2 class="h4 mb-0">Ajouter un bulletin</h2>
+                    {% endif %}
+                </div>
+                
+                <div class="card-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Erreur(s) dans le formulaire :</strong>
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <!-- Nom du bulletin -->
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Nom du bulletin</label>
+                            {{ form.name|add_class:"form-control"|attr:"placeholder:Entrez le nom du bulletin" }}
+                        </div>
+                        
+                        <!-- Titre du bulletin -->
+                        <div class="mb-3">
+                            <label for="id_bulletin_title" class="form-label">Titre du bulletin</label>
+                            {{ form.bulletin_title|add_class:"form-control"|attr:"placeholder:Entrez le titre du bulletin" }}
+                        </div>
+
+                        <!-- Sous-titre -->
+                        <div class="mb-3">
+                            <label for="id_subtitle" class="form-label">Sous-titre</label>
+                            {{ form.subtitle|add_class:"form-control"|attr:"placeholder:Entrez un sous-titre" }}
+                        </div>
+
+
+                        <!-- Zones géographiques -->
+                        <div class="mb-3">
+                            <label for="id_zone" class="form-label">Zones géographiques</label>
+                            {{ form.zone|add_class:"form-select" }}
+                        </div>
+
+                        <!-- Texte d'en-tête -->
+                        <div class="mb-3">
+                            <label for="id_header_text" class="form-label">Texte d'en-tête</label>
+                            {{ form.header_text|add_class:"form-control"|attr:"rows:3"|attr:"placeholder:Entrez le texte d'en-tête" }}
+                        </div>
+
+                        <!-- Image d'en-tête -->
+                        <div class="mb-3">
+                            <label for="id_header_image" class="form-label">Image d'en-tête</label>
+                            {% if form.header_image.value %}
+                                <img src="{{ form.header_image.value.url }}" alt="Image d'en-tête actuelle" class="img-thumbnail mb-2" style="max-width: 200px; display: block;">
+                            {% endif %}
+                            {{ form.header_image|add_class:"form-control" }}
+                        </div>
+
+                        <!-- Texte de pied de page -->
+                        <div class="mb-3">
+                            <label for="id_footer_text" class="form-label">Texte de pied de page</label>
+                            
+                            {{ {{ instance.content }}}}
+                        </div>
+
+                        <!-- Image de pied de page -->
+                        <div class="mb-3">
+                            <label for="id_footer_image" class="form-label">Image de pied de page</label>
+                            {% if form.footer_image.value %}
+                                <img src="{{ form.footer_image.value.url }}" alt="Image de pied de page actuelle" class="img-thumbnail mb-2" style="max-width: 200px; display: block;">
+                            {% endif %}
+                            {{ form.footer_image|add_class:"form-control" }}
+                        </div>
+
+                        <!-- Paramètres -->
+                        <div class="mb-3">
+                            <label for="id_parameters" class="form-label">Paramètres</label>
+                            {{ form.parameters|add_class:"form-select" }}
+                        </div>
+
+
+                        <!-- Contenu (StreamField) -->
+                        <div class="mb-3">
+                            <label class="form-label">Contenu</label>
+                            {% include "wagtailadmin/shared/field.html" with field=form.content %}
+                        </div>
+
+                        <!-- Corps (StreamField) -->
+                        <div class="mb-4">
+                            <label class="form-label">Corps</label>
+                            {% include "wagtailadmin/shared/field.html" with field=form.body %}
+                        </div>
+
+                        <!-- Bouton de soumission -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Votre script JavaScript existant
+    for(var i=0;i<=101;i++){
+        var div = document.getElementById('legend_'+i);
+        var clas = document.getElementById('classe_'+i);
+        var desc = document.getElementById('desc_'+i);
+        if(desc && desc.value == ''){div.style.display='none';}
+    }
+    
+    function add_line(){
+        for(var i=0;i<=101;i++){
+            var div = document.getElementById('legend_'+i);
+            if(div){
+                if(div.style.display == 'none'){
+                    div.style.display = 'block';break;
+                }
+            }        
+        }
+    }
+    
+    function del_line(){
+        for(var i=101;i>0;i--){
+            var div = document.getElementById('legend_'+i);
+            if(div){
+                if(div.style.display == 'block'){
+                    div.style.display = 'none';break;
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

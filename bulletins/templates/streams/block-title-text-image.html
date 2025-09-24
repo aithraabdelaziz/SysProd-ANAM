@@ -1,0 +1,103 @@
+{% load dict_extras %}
+{% load static %}
+{% load custom_tags %}
+
+<style>
+    @media print {
+  .no-print {
+    display: none !important;
+  }
+}
+</style>
+{% if value.title %}
+        <h3 style="{{ctx.style.title }}">{{ value.title }} 
+            {% if ctx.periode %} : {{ ctx.periode }}{% endif %}</h3><br>
+    {% endif %} 
+<div style="display: flex; align-items: top;">
+
+    <div style="{{ctx.style.text }}">
+           {% if modify_text %} 
+                <form method="post" action="{% url 'bulletins:save_forecast' pk=object.id date_bult=object.established_date|date:'Y-m-d' %}" class="bg-light p-4 rounded shadow-sm">
+                    {% csrf_token %}
+                    <textarea name="forecast" class="rich-text-editor form-control">{{ ctx.Text | safe  }} </textarea>
+                    <input type="hidden" name="forecast_id" value="{{ ctx.fields.forecast_id}}">
+                    <input type="hidden" name="param" value="{{ ctx.fields.param}}">
+                    <input type="hidden" name="zone" value="{{ ctx.fields.zone}}">
+                    <input type="hidden" name="echeance" value="{{ ctx.fields.ech}}">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            {% else %}  
+                {% if ctx.Text %} 
+                    {{ ctx.Text | safe }}
+                {% endif %}
+            {% endif %}  
+            {% if ctx.AnnexText %}<span style="font-size: 8px" >{{ ctx.AnnexText  | safe }}</span>{% endif %}  
+        <br>          
+    </div>
+    
+    <figure style="{{ctx.style.image }}">
+        <img src="{{ ctx.url_img_png }}" alt="Carte" style="max-width: 100%;">
+        {% if ctx.titre_legende %} 
+            <figcaption>
+                {{ ctx.titre_legende }} 
+            </figcaption>
+        {% endif %}
+        <div class="no-print" style="text-align: right; margin-top: 5px;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="loadHtmlInModal()">Carte intéractive</button>
+            {% with urlimg="https://www.meteoburkina.bf/documents/323/Bulletin_du_22_Mai__2025_%C3%A0_12h00.pdf" %}
+              <a href="https://wa.me/?text=*{{ value.title|safe | html_to_whatsapp|urlencode }}* : %0A{{ ctx.Text |safe | html_to_whatsapp|urlencode }} {{ urlimg|safe|urlencode  }}" target="_blank" rel="noopener noreferrer">
+              <button type="button" class="btn btn-primary btn-sm">WhatsApp</button>
+            </a>
+            {% endwith %}
+        </div>
+    </figure>
+
+    <div class="no-print">
+
+      <div class="modal fade" id="htmlModal" tabindex="-1" aria-labelledby="htmlModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="htmlModalLabel">Carte Interactive - Prévision</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body" id="modalHtmlContent">
+              <!-- Le contenu du fichier HTML sera injecté ici -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+<script>
+function loadHtmlInModal() {
+     const url = '{{ ctx.url_img_html }}';
+
+    // Vérifier que le chemin finit bien par .html
+    if (!url.endsWith('.html')) {
+        document.getElementById('modalHtmlContent').innerHTML = "<p class='text-danger'>Carte intéractive indisponible!!</p>";
+        new bootstrap.Modal(document.getElementById('htmlModal')).show();
+        return;
+    }
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur lors du chargement');
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('modalHtmlContent').innerHTML = html;
+            new bootstrap.Modal(document.getElementById('htmlModal')).show();
+        })
+        .catch(error => {
+            document.getElementById('modalHtmlContent').innerHTML = "<p class='text-danger'>Impossible de charger le contenu.</p>";
+            console.error(error);
+            new bootstrap.Modal(document.getElementById('htmlModal')).show();
+        });
+}
+</script>
+
+
+   

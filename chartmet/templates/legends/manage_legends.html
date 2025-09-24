@@ -1,0 +1,61 @@
+<!-- manage_users.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ msg }}</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2>Gérer les légends</h2>
+      <a href="{% url 'chartmet:add_legend' %}" class="btn btn-outline-success">Ajouter</a>
+     <table class="table table-hover">
+      <thead>
+        <tr class="table-primary">
+          <th scope="col">Name</th>
+          <th scope="col">Statut</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for L in legends %}        
+            {% if L.active %}
+            <tr class="table-success">
+              <th scope='row'>{{ L.name }}</th>
+              <td>Actif</td>
+              <td>
+                <a href="{% url 'chartmet:edit_legend' L.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                <a href="{% url 'chartmet:deactivate_legend' L.id %}" class="btn btn-warning btn-sm">Désactiver</a>
+                <a href="{% url 'chartmet:delete_legend' L.id %}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Supprimer</a>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="table-danger">
+              <th scope='row'>{{ L.name }}</th>
+              <td>Actif</td>
+              <td>Description</td>
+              <td>
+                <a href="{% url 'chartmet:edit_legend' L.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                <a href="{% url 'chartmet:activate_legend' L.id %}" class="btn btn-success btn-sm">&nbsp;&nbsp;Activer&nbsp;&nbsp;&nbsp;</a>
+                <a href="{% url 'chartmet:delete_legend' L.id %}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Supprimer</a>
+              </td>
+            </tr>
+            {% endif %}  
+        {% endfor %}
+      </tbody>
+     </table>
+     <a href="{% url 'chartmet:add_legend' %}" class="btn btn-outline-success">Ajouter</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+  <script>
+    function confirmDelete() {
+        var result = confirm("Are you sure you want to delete this Legend?");
+        if (result) {
+            return true;
+        }
+        return false;
+    }
+  </script>
+{% endblock %}

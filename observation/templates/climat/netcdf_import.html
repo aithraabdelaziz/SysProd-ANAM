@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 2em auto;">
+    <h1 class="mb-4">Import NetCDF - Étape 1 : Upload</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert 
+            {% if message.tags == 'error' %}alert-danger
+            {% elif message.tags == 'success' %}alert-success
+            {% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-upload me-2"></i> Charger le fichier NetCDF
+        </button>
+    </form>
+</div>
+{% endblock %}

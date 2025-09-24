@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h4>Sélectionner les zones à fusionner : </h4>
+    <form method="get" action="{% url 'forecast:select_station' %}">
+    
+        <label for="active">Active:</label>
+        <input type="checkbox" name="active" id="active" value="true">
+        <label for="inactive">Inactive:</label>
+        <input type="checkbox" name="inactive" id="inactive" value="true">
+        <button type="submit">Filter</button>
+    </form>
+
+
+    {% endblock %}

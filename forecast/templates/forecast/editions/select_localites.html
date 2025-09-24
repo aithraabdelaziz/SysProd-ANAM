@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Sélection d’un groupe de localités</h2>
+
+  <div class="row g-4">
+    {% for localite in localites %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="card-title">{{ localite.name }}</h5>
+              <p class="card-text text-muted">
+                {{ bulletin.bulletin_title|truncatechars:80 }}
+              </p>
+            </div>
+            <a href="{% url 'forecast:select_zone' localite.id %}" class="btn btn-primary mt-3">
+              Sélectionner
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Aucun groiupe de localité n'est configuré.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

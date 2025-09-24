@@ -1,0 +1,153 @@
+{% load dict_extras %}
+{% load static %}
+{% load custom_tags %}
+<style type="text/css">
+    .station-separator {
+      border-top: 3px solid #000; /* ou autre couleur selon ton design */
+    }
+</style>
+<div class="block-forecast-table">
+    {% if self.title %}
+        <h3 style="{{ctx.style.title }}">{{ self.title }} {% if ctx.fcstT_periode %} : <span style="{{ctx.style.title }}"> {{ ctx.fcstT_periode }}</span>{% endif %}</h3>
+    {% endif %}
+    {% if ctx.fcstT_sorted_heures|length > 1 %}
+        <table class="forecast-table" style="{{ctx.style.table }}">
+            <thead>
+                <tr>
+                    <th rowspan="2" >Localité</th>
+                    <th rowspan="2">Paramètre</th>
+                    {% for jour,ech in ctx.fcstT_jours_obs.items %}
+                        <th colspan="{{ ech|length }}"> {{ jour }}</th>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    {% for jour,ech in ctx.fcstT_jours_obs.items %}
+                        {% for e,name_ech in ech.items %}
+                            <th> {{ name_ech }}</th>
+                        {% endfor %}
+                    {% endfor %}
+                </tr>     
+            </thead>
+
+            {% if modify_text %}  
+                <form method="post" action="{% url 'bulletins:save_fcstTable' pk=object.id  date_bult=object.established_date|date:'Y-m-d' %}" class="bg-light p-4 rounded shadow-sm">
+                    {% csrf_token %}
+                <tbody>
+                  {% for zone in ctx.fcstT_stations %}
+                    {% for parametre in ctx.fcstT_parameters %}
+                      <tr class="{% if forloop.first %}station-separator{% endif %}">
+                        {% if forloop.first %}
+                          <th rowspan="{{ ctx.fcstT_parameters|length }}">{{ zone.name }}</th>
+                        {% endif %}
+                        <td class="parameter-col">{{ parametre.name }}</td>
+                        {% for ech in ctx.fcstT_sorted_heures %}
+                          <td class="echeance-col">
+                            {% with val=ctx.fcstT_obs_data|getV:zone.id|getV:parametre.id|getV:ech.id %}
+                                {% if val.1 and "div class" in val.1 %}
+                                  {{ val.1 | safe}}
+                                {% else %}
+                                    <input type="text" name="fcst_{{zone.id}}_{{parametre.id}}_{{ech.id}}_{{val.0}}" value="{{ val.1|replace_none:''|safe}}"> 
+                                {% endif %}
+                            {% endwith %}
+                          </td>
+                        {% endfor %}
+                      </tr>
+                    {% endfor %}
+                  {% endfor %}
+                  <tr><td colspan="{{ctx.fcstT_sorted_heures|length|add:'2'}}"><button type="submit" class="btn btn-primary">Enregistrer</button></td></tr>
+                </tbody>
+            {% else %}
+                <tbody>
+                  {% for zone in ctx.fcstT_stations %}
+                    {% for parametre in ctx.fcstT_parameters %}
+                      <tr class="{% if forloop.first %}station-separator{% endif %}">
+                        {% if forloop.first %}
+                          <th rowspan="{{ ctx.fcstT_parameters|length }}">{{ zone.name }}</th>
+                        {% endif %}
+                        <td class="parameter-col">{{ parametre.name }}</td>
+                        {% for ech in ctx.fcstT_sorted_heures %}
+                          <td class="echeance-col">
+                            {% with val=ctx.fcstT_obs_data|getV:zone.id|getV:parametre.id|getV:ech.id %}
+                              {% if val %}
+                                {{ val.1|replace_none|safe }}
+                              {% else %}
+                                -
+                              {% endif %}
+                            {% endwith %}
+                          </td>
+                        {% endfor %}
+                      </tr>
+                    {% endfor %}
+                  {% endfor %}
+                </tbody>
+            {% endif %}
+            </table>
+    {% else %}
+
+        <table class="forecast-table" style="{{ctx.style.table }}">
+            
+            <thead>
+                 <tr>
+                    <th colspan="{{ ctx.fcstT_parameters|length|add:1 }}">Prévision {% if ctx.fcstT_periode %}: {{ ctx.fcstT_periode }}{% endif %}</th>
+                </tr>
+                <tr>
+                    <th>Station</th>
+                    {% for param in ctx.fcstT_parameters %}
+                            <th> {{ param.name }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            {% if modify_text %}  
+                <form method="post" action="{% url 'bulletins:save_obsTable' pk=object.id date_bult=object.established_date|date:'Y-m-d' %}" class="bg-light p-4 rounded shadow-sm">
+                    {% csrf_token %}
+                    <tbody>
+                        {% for zone in ctx.fcstT_stations %}
+                        <tr>
+                            <td style='font-weight: bold'>{{ zone.name }}</td>
+                            {% for parametre in ctx.fcstT_parameters %}
+                                {% for ech in ctx.fcstT_sorted_heures %}
+                                  <td class="echeance-col">
+                                    {% with val=ctx.fcstT_obs_data|getV:zone.id|getV:parametre.id|getV:ech.id %}
+                                        {% if val.1 and "div class" in val.1 %}
+                                          {{ val.1 | safe}}
+                                        {% else %}
+                                            <input type="text" name="obs_{{zone.id}}_{{parametre.id}}_{{ech.id}}_{{val.0}}" value="{{ val.1|replace_none:''|safe}}"> 
+                                        {% endif %}
+                                    {% endwith %}
+                                  </td> 
+                                {% endfor %}
+                            {% endfor %}
+                         </tr>
+                        {% endfor %}
+                        <tr><td colspan="{{ctx.fcstT_parameters|length|add:'1'}}"><button type="submit" class="btn btn-primary">Enregistrer</button></td></tr>
+                    </tbody>
+                    
+                </form> 
+            {% else %}
+            <tbody>
+                {% for zone in ctx.fcstT_stations %}
+                <tr>
+                    <td style='font-weight: bold'>{{ zone.name }}</td>
+                    {% for parametre in ctx.fcstT_parameters %}
+                        {% for ech in ctx.fcstT_sorted_heures %}
+                            <td class="{{parametre.name |lower}}">
+                                {% with val=ctx.fcstT_obs_data|getV:zone.id|getV:parametre.id|getV:ech.id %}
+                                  {% if val %}
+                                    {{ val.1|replace_none|safe }}
+                                  {% else %}
+                                    
+                                  {% endif %}
+                                {% endwith %}
+                            </td>
+                        {% endfor %}
+                    {% endfor %}
+                 </tr>
+                {% endfor %}
+                </tbody>
+            {% endif %}
+            </table>
+        
+    {% endif %}
+    
+</div>
+{% if ctx.AnnexText %}<span style="font-size: 9px;font-weight: italic" >{{ ctx.AnnexText  | safe }}</span>{% endif %}

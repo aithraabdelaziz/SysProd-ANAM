@@ -1,0 +1,12 @@
+{% load static %}
+{% load wagtailusers_tags %}
+{% load wagtailsettings_tags wagtailimages_tags %}
+{% get_settings %}
+
+<footer class="footer bg-light py-3 mt-auto">
+  <div class="container text-center">
+    {% if settings.administrate.OrganisationSetting.footer_text_site %}
+      <small class="text-muted">{{ settings.administrate.OrganisationSetting.footer_text_site }}</small>
+    {% endif %}
+  </div>
+</footer>

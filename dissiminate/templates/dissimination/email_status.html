@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>État de la diffusion par email</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Bulletin</th>
+      <th>Client</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for result in results %}
+    <tr>
+      <td>{{ result.dist.bulletin.name }}</td>
+      <td>{{ result.dist.client.name }}</td>
+      <td>{{ result.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'zones/base_area.html' %}
+
+<div class="container my-4">
+    <h2 class="mb-4 text-center text-primary">Gestion des Zones Géographiques</h2>
+
+    <!-- Zone de filtre -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Filtrer les zones</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" action="{% url 'forecast:georaphic_area_list' %}" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Recherche</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher par nom..." value="{{ request.GET.search }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="category" class="form-label">Catégorie</label>
+                    <select name="category" id="category" class="form-select">
+                        <option value="">Toutes</option>
+                        <option value="commune" {% if request.GET.category == 'commune' %}selected{% endif %}>Commune</option>
+                        <option value="province" {% if request.GET.category == 'province' %}selected{% endif %}>Province</option>
+                        <option value="region" {% if request.GET.category == 'region' %}selected{% endif %}>Région</option>
+                        <option value="ville" {% if request.GET.category == 'ville' %}selected{% endif %}>Ville</option>
+                        <option value="polygon" {% if request.GET.category == 'divers' %}selected{% endif %}>Polygone</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label d-block">Statut</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="active" id="active" value="true" {% if request.GET.active %}checked{% endif %}>
+                        <label class="form-check-label" for="active">Actif</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="inactive" id="inactive" value="true" {% if request.GET.inactive %}checked{% endif %}>
+                        <label class="form-check-label" for="inactive">Inactif</label>
+                    </div>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-outline-primary">Filtrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bouton Ajouter -->
+    <div class="mb-3 text-end">
+        <a href="{% url 'forecast:georaphic_area_create' %}" class="btn btn-success">+ Ajouter une zone</a>
+
+        <a href="{% url 'forecast:shapefile_view' %}" class="btn btn-outline-secondary">Charger un shapefile</a>
+        <a href="{% url 'forecast:select_geographic_area' %}" class="btn btn-outline-secondary">Fusionner des zones</a>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-responsive shadow-sm">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nom</th>
+                    <th>Statut</th>
+                    <th>Catégorie</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for area in areas %}
+                <tr>
+                    <td>{{ area.name }}</td>
+                    <td>
+                        <form action="{% url 'forecast:georaphic_area_deactivate' pk=area.pk %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            {% if area.Active %}
+                                <button type="submit" class="btn btn-warning btn-sm">Désactiver</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success btn-sm">Activer</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                    <td>{{ area.category }}</td>
+                    <td>
+                        <a href="{% url 'forecast:georaphic_area_update' pk=area.pk %}" class="btn btn-primary btn-sm">Modifier</a>
+                        <a href="{% url 'forecast:georaphic_area_delete' pk=area.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.active %}&active={{ request.GET.active }}{% endif %}{% if request.GET.inactive %}&inactive={{ request.GET.inactive }}{% endif %}">&laquo;</a>
+            </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.active %}&active={{ request.GET.active }}{% endif %}{% if request.GET.inactive %}&inactive={{ request.GET.inactive }}{% endif %}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.active %}&active={{ request.GET.active }}{% endif %}{% if request.GET.inactive %}&inactive={{ request.GET.inactive }}{% endif %}">&raquo;</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    <!-- Autres actions -->
+    <div class="mt-4 d-flex gap-3 justify-content-end">
+        <a href="{% url 'forecast:shapefile_view' %}" class="btn btn-outline-secondary">Charger un shapefile</a>
+        <a href="{% url 'forecast:select_geographic_area' %}" class="btn btn-outline-secondary">Fusionner des zones</a>
+    </div>
+</div>
+
+{% endblock %}

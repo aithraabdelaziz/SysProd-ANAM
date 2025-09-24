@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Page not found{% endblock %}
+
+{% block body_class %}template-404{% endblock %}
+
+{% block content %}
+<h1>Page en développement</h1>
+
+<img src="{% static 'images/maintenance.png' %}" width="100%">
+{% endblock %}

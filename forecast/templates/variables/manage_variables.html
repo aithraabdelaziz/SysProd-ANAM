@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-4">
+    {% if msg %}
+        <div class="alert alert-info text-center" role="alert">
+            {{ msg }}
+        </div>
+    {% endif %}
+
+    <div class="card shadow rounded-3">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Variables météorologiques</h4>
+            <a href="{% url 'forecast:add_variable' %}" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle"></i> Ajouter une variable
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr class="align-middle text-center">
+                            <th>Nom</th>
+                            <th>Abréviation</th>
+                            <th>Statut</th>
+                            <th>Catégorie</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for V in variables %}
+                            <tr class="align-middle text-center {% if V.active %}table-success{% else %}table-danger{% endif %}">
+                                <td><strong>{{ V.name }}</strong></td>
+                                <td>{{ V.shortName }}</td>
+                                <td>
+                                    {% if V.active %}
+                                        <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactif</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ V.get_category_display }}</td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                        <a href="{% url 'forecast:edit_variable' V.id %}" class="btn btn-outline-primary btn-sm">
+                                            Modifier
+                                        </a>
+                                        {% if V.active %}
+                                            <a href="{% url 'forecast:deactivate_variable' V.id %}" class="btn btn-outline-warning btn-sm">
+                                                Désactiver
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'forecast:activate_variable' V.id %}" class="btn btn-outline-success btn-sm">
+                                                Activer
+                                            </a>
+                                        {% endif %}
+                                        <a href="{% url 'forecast:delete_variable' V.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirmDelete();">
+                                            Supprimer
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Aucune variable disponible.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a href="{% url 'forecast:add_variable' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Ajouter une nouvelle variable
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function confirmDelete() {
+        return confirm("Êtes-vous sûr de vouloir supprimer cette variable ?");
+    }
+</script>
+{% endblock %}

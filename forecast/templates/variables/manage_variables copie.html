@@ -1,0 +1,67 @@
+<!-- manage_users.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ msg }}</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 offset-md-0">
+      <h2>Gérer les variables météorologiques</h2>
+      <a href="{% url 'forecast:add_variable' %}" class="btn btn-primary">Ajouter</a>
+     <table class="table table-hover">
+      <thead>
+        <tr class="table-primary">
+          <th scope="col">Name</th>
+          <th scope="col">Short Name</th>
+          <th scope="col">Statut</th>
+          <th scope="col">Category</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for V in variables %}        
+            {% if V.active %}
+            <tr class="table-success">
+              <th scope='row'>{{ V.name }}</th>
+              <td>{{ V.shortName }}</td>
+              <td>Actif</td>
+              <td>{{ V.get_category_display }}</td>
+              <td>
+                <a href="{% url 'forecast:edit_variable' V.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                <a href="{% url 'forecast:deactivate_variable' V.id %}" class="btn btn-warning btn-sm">Désactiver</a>
+                <a href="{% url 'forecast:delete_variable' V.id %}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Supprimer</a>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="table-danger">
+              <th scope='row'>{{ V.name }}</th>
+              <td>{{ V.shortName }}</td>
+              <td>Inactif</td>
+              <td>{{ V.get_category_display }}</td>
+              <td>
+                <a href="{% url 'forecast:edit_variable' V.id %}" class="btn btn-primary btn-sm">Modifier</a>
+                <a href="{% url 'forecast:activate_variable' V.id %}" class="btn btn-success btn-sm">&nbsp;&nbsp;Activer&nbsp;&nbsp;&nbsp;</a>
+                <a href="{% url 'forecast:delete_variable' V.id %}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">Supprimer</a>
+              </td>
+            </tr>
+            {% endif %}  
+        {% endfor %}
+      </tbody>
+     </table>
+     <a href="{% url 'forecast:add_variable' %}" class="btn btn-primary">Ajouter</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+  <script>
+    function confirmDelete() {
+        var result = confirm("Are you sure you want to delete this Variable?");
+
+        if (result) {
+            return true;
+        }
+        return false;
+    }
+  </script>
+{% endblock %}

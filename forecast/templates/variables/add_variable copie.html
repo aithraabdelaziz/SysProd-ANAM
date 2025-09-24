@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if variable %}
+  <h1> Modification de la variable : <span class="text-primary">{{ variable }}</span> </h1>
+{% else %}
+  <h1>Ajouter une Variable Météorologique</h1>
+{% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if variable %}
+          <input type="submit" value="Modifier la Variable">
+        {% else %}
+          <input type="submit" value="Ajouter la Variable">
+        {% endif %}
+       
+    </form>
+{% endblock %}
+
+

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    body {
+      background: #f0f2f5;
+    }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+    }
+    .card:nth-child(1) .card-icon {
+      color: #ffc107; /* jaune soleil */
+    }
+    .card:nth-child(2) .card-icon {
+      color: #198754; /* vert */
+    }
+    .card:nth-child(3) .card-icon {
+      color: #0dcaf0; /* bleu clair */
+    }
+  </style>
+  <div class="container py-5">
+    <h2 class="mb-5 text-center display-5 fw-bold">
+      <i class="bi bi-cloud-sun-fill me-2 text-warning"></i>
+      Prévisions Météorologiques
+    </h2>
+    
+    <div class="row g-4">
+      <!-- <div class="col-md-4">
+        <div class="card text-center p-4 bg-light">
+          <div class="card-body">
+            <i class="bi bi-cloud-sun-fill card-icon mb-3"></i>
+            <h5 class="card-title">Afficher les prévisions</h5>
+            <p class="card-text">Consulter les bulletins produits automatiquement ou manuellement.</p>
+            <a href="{% url 'forecast:select_bulletins'%}" class="btn btn-outline-primary">Voir</a>
+          </div>
+        </div>
+      </div> -->
+      <div class="col-md-4">
+        <div class="card text-center p-4 bg-white">
+          <div class="card-body">
+            <i class="bi bi-pencil-square card-icon mb-3"></i>
+            <h5 class="card-title">Éditer / Valider</h5>
+            <p class="card-text">Modifier ou valider les prévisions générées automatiquement.</p>
+            <a href="{% url 'forecast:select_localites'%}" class="btn btn-outline-success">Modifier</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center p-4 bg-light">
+          <div class="card-body">
+            <i class="bi bi-map-fill card-icon mb-3"></i>
+            <h5 class="card-title">Cartes des prévisions</h5>
+            <p class="card-text">Visualiser les prévisions sur carte.</p>
+            <a href="{% url 'chartmet:index' %}" class="btn btn-outline-info">Afficher</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

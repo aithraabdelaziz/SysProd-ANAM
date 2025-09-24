@@ -1,0 +1,36 @@
+{% load dict_extras %}
+{% load static %}
+
+<style>
+    @media print {
+  .no-print {
+    display: none !important;
+  }
+}
+</style>
+    <!-- Texte -->
+    <div style="{{ctx.style.text }}">
+        <h3 style="{{ctx.style.title }}">{{ value.title }} 
+            {% if ctx.periode and value.title|length > 0 %} : {{ ctx.periode }}{% endif %}</h3><br>
+            <!-- {% if ctx.periode and value.title|length < 30 %} : {{ ctx.periode }}{% endif %}</h3> -->
+            <!-- {% if ctx.periode and value.title|length >= 30%}<h5 style="{{ctx.style.title }}">{{ ctx.periode }}</h5>{% endif %} -->
+
+            {% if modify_text %} 
+                <form method="post" action="{% url 'bulletins:save_forecast' pk=object.id date_bult=object.established_date|date:'Y-m-d' %}" class="bg-light p-4 rounded shadow-sm">
+                    {% csrf_token %}
+                    <textarea name="forecast" class="rich-text-editor form-control">{{ ctx.Text | safe  }} </textarea>
+                    <input type="hidden" name="forecast_id" value="{{ ctx.fields.forecast_id}}">
+                    <input type="hidden" name="param" value="{{ ctx.fields.param}}">
+                    <input type="hidden" name="zone" value="{{ ctx.fields.zone}}">
+                    <input type="hidden" name="echeance" value="{{ ctx.fields.ech}}">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            {% else %}   
+                {{ ctx.Text | safe  }}
+            {% endif %} 
+            {% if value.texte %}<span style="font-size: 8px" >{{ value.texte  | safe }}</span>{% endif %}
+            <br>           
+    </div>
+
+
+

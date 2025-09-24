@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4>Zones fusionnées: </h4>
+<form method="post" action="{% url 'forecast:save_merged_georaphic_area' %}">
+    {% csrf_token %}
+    <label for="id_name">Nom de la nouvelle zone fusionnée:</label>
+    <input type="text" name="name" id="id_name" required>
+    
+    <label for="id_category">Catégorie:</label>
+    <select name="category" id="id_category" required>
+            <option value="commune">Commune</option>
+            <option value="province">Province</option>
+            <option value="region">Région</option>
+            <option value="polygon">Polygone</option>
+            <option value="ville">Ville</option>
+    </select>
+    <label for="fusionner_lines">Préserver les frontières :</label>
+    <input type="checkbox" name="preserver_lines" id="fusionner_lines" value="True">
+    <!-- Champ caché pour selected_ids -->
+    <input type="hidden" name="selected_ids" value="{{ selected_ids|safe }}">
+    <button type="submit">Fusionner</button>
+</form>
+    <div id="map" style="height: 400px;"></div>
+    <script>
+        //console.log({{selected_ids}});
+        //console.log("Selected Geometries JSON:", {{ selected_geometries_json|safe }});
+        // JavaScript pour initialiser la carte et afficher les géométries sélectionnées
+        var map = L.map('map').setView([29.26340520817928, -10.413367744774774], 5);
+
+        // Ajouter une couche de carte (par exemple, OpenStreetMap)
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Récupérer les géométries sélectionnées et les afficher sur la carte
+    var selectedGeometries = {{ selected_geometries_json|safe }};  // Assurez-vous d'utiliser |safe ici
+
+selectedGeometries.features.forEach(function(feature) {
+    // Assurez-vous d'utiliser la syntaxe appropriée pour votre bibliothèque de cartographie
+    var geometry = L.geoJSON(feature.geometry);
+    geometry.addTo(map);
+});
+    </script>
+{% endblock %}

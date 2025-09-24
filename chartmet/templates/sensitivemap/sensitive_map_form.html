@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body class="container py-5">
+    <h2 class="mb-4">Carte temps sensible - Prévision</h2>
+    <form method="post" action="{% url 'chartmet:generate_map' %}">
+        {% csrf_token %}
+        
+        <!-- Champ Date -->
+        <div class="mb-3">
+            <label for="date" class="form-label">Date :</label>
+            <input type="date" class="form-control" name="date" id="date"  required> <!-- list="available-dates" -->
+            <datalist id="available-dates">
+                {% for date in dates_echeances.keys %}
+                    <option value="{{ date }}">
+                {% endfor %}
+            </datalist>
+        </div>
+        
+        <!-- Champ Échéance -->
+        <div class="mb-3">
+            <label for="echeance" class="form-label">Échéance :</label>
+            <select id="echeance" name="echeance" class="form-select" required>
+                <option value="">-- Choisir une échéance --</option>
+                <!-- Options dynamiques ajoutées par JavaScript -->
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="map" class="form-label">Template Carte :</label>
+            <select id="map" name="map" class="form-select" required>
+              <option value="0">Par défaut</option>
+              {% for m in maps %}
+                <option value="{{ m.id }}">{{ m.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Afficher la carte</button>
+    </form>
+
+    <!-- JavaScript pour mettre à jour les échéances en fonction de la date choisie -->
+    <script>
+        const datesEcheances = {{ dates_echeances|safe }};
+
+        document.getElementById('date').addEventListener('change', function() {
+            const selectedDate = this.value;
+            const echeanceSelect = document.getElementById('echeance');
+            echeanceSelect.innerHTML = '<option value="">-- Choisir une échéance --</option>';
+
+            if (selectedDate in datesEcheances) {
+                datesEcheances[selectedDate].forEach(function(echeance) {
+                    const option = document.createElement('option');
+                    option.value = echeance;
+                    option.textContent = echeance + 'h';
+                    echeanceSelect.appendChild(option);
+                });
+            }
+        });
+    </script>
+</body>
+
+{% endblock %}

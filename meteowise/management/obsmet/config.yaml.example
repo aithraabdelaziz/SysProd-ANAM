@@ -1,0 +1,10 @@
+api:
+  url: "https://wis2.meteoburkina.bf/oapi/collections/urn:wmo:md:bf-anam:mx2w8y/items?f=json&sortby=-reportTime"
+
+database:
+  host: "localhost"
+  port: 5432
+  dbname: "******"
+  user: "*****"
+  password: "******
+"

@@ -1,0 +1,24 @@
+{% load dict_extras %}
+{% load static %}
+
+<div style="display: flex; align-items: top;">
+    <!-- Texte -->
+     <figure style="{{ctx.style.s1.image }}">
+        <img src="{{ ctx.url_img_png1 }}" alt="Carte 1" style="max-width: 100%;">
+	    {% if ctx.titre_legende1 %} 
+	    	<figcaption>
+	        	{{ ctx.titre_legende1 }} 
+	    	</figcaption>
+	    {% endif %}
+    </figure>
+    <!-- Image -->
+    <figure style="{{ctx.style.s2.image }}">
+        <img src="{{ ctx.url_img_png2 }}" alt="Carte 2" style="max-width: 100%;">
+	    {% if ctx.titre_legende2 %} 
+	    	<figcaption>
+	        	{{ ctx.titre_legende2 }} 
+	    	</figcaption>
+	    {% endif %}
+	</figure>
+</div>
+   

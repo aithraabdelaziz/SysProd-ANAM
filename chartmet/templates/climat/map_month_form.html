@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<script>
+  const sourceParams = {{ sources_params|safe }};
+
+  function updateParamOptions() {
+    const source = document.getElementById("source").value;
+    const paramSelect = document.getElementById("parametre");
+    paramSelect.innerHTML = "";
+
+    if (sourceParams[source]) {
+      sourceParams[source].forEach(entry => {
+        const param = Object.keys(entry)[0];
+        const label = entry[param];
+        const option = document.createElement("option");
+        option.value = param;
+        option.text = label ? `${label} (${param})` : param;
+        paramSelect.appendChild(option);
+      });
+    }
+  }
+  document.addEventListener("DOMContentLoaded", updateParamOptions);
+</script>
+
+<body class="container py-5">
+  <h2 class="mb-4">Carte Climatologie mensuelle</h2>
+  <form method="post" action="{% url 'chartmet:generate_monthly_clim_map' %}">
+    {% csrf_token %}
+
+    <div class="row g-4">
+
+      <!-- From -->
+      <div class="col-md-3">
+        <label for="from" class="form-label">De (AAAA-MM) :</label>
+        <input type="month" class="form-control" name="from" id="from" required>
+      </div>
+
+      <!-- To -->
+      <div class="col-md-3">
+        <label for="to" class="form-label">À (AAAA-MM) :</label>
+        <input type="month" class="form-control" name="to" id="to" required>
+      </div>
+
+      <!-- Source -->
+      <div class="col-md-4">
+        <label for="source" class="form-label">Source :</label>
+        <select id="source" name="source" class="form-select" required onchange="updateParamOptions()">
+          {% for src in sources_params.keys %}
+            <option value="{{ src }}">{{ src|upper }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Paramètre -->
+      <div class="col-md-6">
+        <label for="parametre" class="form-label">Paramètre :</label>
+        <select name="parametre" id="parametre" class="form-select" required>
+          <!-- Options générées dynamiquement -->
+        </select>
+      </div>
+
+      <!-- Fonction -->
+      <div class="col-md-4">
+        <label for="function" class="form-label">Fonction :</label>
+        <select id="function" name="function" class="form-select" required>
+          {% for m in functions %}
+            <option value="{{ m.function }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Template Carte -->
+      <div class="col-md-4">
+        <label for="mapModel" class="form-label">Template Carte :</label>
+        <select id="mapModel" name="mapModel" class="form-select" required>
+          <option value="0">Par défaut</option>
+          {% for m in maps %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Afficher la carte</button>
+    </div>
+  </form>
+</body>
+
+{% endblock %}

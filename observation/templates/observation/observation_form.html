@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{% if object %}Modifier{% else %}Ajouter{% endif %} une Prévision</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-body">
+            {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="{% url 'observation:observation_list' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+    </div>
+</form>
+
+
+
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body class="container py-5">
+  <h2 class="mb-4">Carte d'observation spatialisée Préconfigurée</h2>
+  <form method="post" action="{% url 'chartmet:points_map_preconfigured' %}">
+    {% csrf_token %}
+
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <label for="date" class="form-label">Date :</label>
+        <input type="date" class="form-control" name="date" id="date" required>
+      </div>
+
+      <div class="col-md-4">
+        <label for="localites" class="form-label">Localités :</label>
+        <select name="localites" id="localites" class="form-select" required>
+          {% for loc in localites %}
+            <option value="{{ loc.id }}" title="{{ loc.name }}">
+              {{ loc.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label for="source" class="form-label">Source :</label>
+        <select id="source" name="source" class="form-select" required>
+          <option value="stations_obs">Station d'observation</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="mapModel" class="form-label">Template Carte :</label>
+        <select id="mapModel" name="mapModel" class="form-select" required>
+          <option value="0">Par défaut</option>
+          {% for m in maps %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Afficher la carte</button>
+    </div>
+  </form>
+</body>
+
+{% endblock %}

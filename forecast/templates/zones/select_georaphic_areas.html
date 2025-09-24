@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <h4>Sélectionner les zones à fusionner : </h4>
+    <form method="get" action="{% url 'forecast:select_geographic_area' %}">
+        <select name="category">
+            <option value="">All Categories</option>
+            <option value="commune">Commune</option>
+            <option value="province">Province</option>
+            <option value="region">Région</option>
+            <option value="polygon">Polygone</option>
+            <option value="ville">Ville</option>
+        </select>
+    
+        <label for="active">Active:</label>
+        <input type="checkbox" name="active" id="active" value="true">
+        <label for="inactive">Inactive:</label>
+        <input type="checkbox" name="inactive" id="inactive" value="true">
+        <button type="submit">Filter</button>
+    </form>
+
+    <form action="{% url 'forecast:merge_geographic_areas' %}" method="get">
+            {% csrf_token %}
+       <!--  <ul>
+            {% for area in georaphic_areas %}
+                <li>
+                    <label>
+                        <input type="checkbox" name="selected_ids" value="{{ area.id }}">
+                        {{ area.name }} 
+                    </label>
+                </li>
+            {% endfor %}
+        </ul> -->
+        <div class="row">
+          {% for area in georaphic_areas %}
+            <div class="col-6 col-md-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="selected_ids" value="{{ area.id }}" id="area-{{ area.id }}">
+                <label class="form-check-label" for="area-{{ area.id }}">
+                  {{ area.name }}
+                </label>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <button type="submit">Fusionner les zones séléctionnées</button>
+    </form>
+
+    {% endblock %}

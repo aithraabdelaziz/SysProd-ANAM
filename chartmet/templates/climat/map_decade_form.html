@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<script>
+  const sourceParams = {{ sources_params|safe }};
+
+  function updateParamOptions() {
+    const source = document.getElementById("source").value;
+    const paramSelect = document.getElementById("parametre");
+    paramSelect.innerHTML = "";
+
+    if (sourceParams[source]) {
+      sourceParams[source].forEach(entry => {
+        const param = Object.keys(entry)[0];
+        const label = entry[param];
+        const option = document.createElement("option");
+        option.value = param;
+        option.text = label ? `${label.toUpperCase()}` : param.toUpperCase();
+        paramSelect.appendChild(option);
+      });
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", updateParamOptions);
+</script>
+
+<body class="container py-5">
+  <h2 class="mb-4">Carte climatologie Décadaire</h2>
+  <form method="post" action="{% url 'chartmet:generate_decade_clim_map' %}">
+    {% csrf_token %}
+
+    <div class="row g-4">
+
+      <!-- Date complète -->
+      <div class="col-md-4">
+        <label for="date" class="form-label">Date de référence (JJ-MM-AAAA) :</label>
+        <input type="date" class="form-control" name="date" id="date" required value="{{ today|date:'Y-m-d' }}">
+      </div>
+
+      <!-- Décade début -->
+      <div class="col-md-2">
+        <label for="decade1" class="form-label">Décade début (offset) :</label>
+        <input type="number" class="form-control" name="decade1" id="decade1" min="-1" max="1" required value="-1">
+      </div>
+
+      <!-- Décade fin -->
+      <div class="col-md-2">
+        <label for="decade2" class="form-label">Décade fin (offset) :</label>
+        <input type="number" class="form-control" name="decade2" id="decade2" min="-1" max="1" required value="0">
+      </div>
+
+      <!-- Source -->
+      <div class="col-md-4">
+        <label for="source" class="form-label">Source :</label>
+        <select id="source" name="source" class="form-select" required onchange="updateParamOptions()">
+          {% for src in sources_params.keys %}
+            <option value="{{ src }}">{{ src|upper }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Paramètre -->
+      <div class="col-md-6">
+        <label for="parametre" class="form-label">Paramètre :</label>
+        <select name="parametre" id="parametre" class="form-select" required>
+          <!-- Options dynamiques -->
+        </select>
+      </div>
+
+      <!-- Fonction -->
+      <div class="col-md-4">
+        <label for="function" class="form-label">Fonction :</label>
+        <select id="function" name="function" class="form-select" required>
+          {% for m in functions %}
+            <option value="{{ m.function }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+       <!-- Interpolation -->
+      <div class="col-md-4">
+        <label for="interpolation" class="form-label">Interpolation :</label>
+        <select id="interpolation" name="interpolation" class="form-select" >
+          <option value="">------</option>
+          {% for key, label in inertpolation %}
+            <option value="{{ key }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+       <!-- Extrapolation  -->
+      <div class="col-md-4">
+        <label for="extrapolation" class="form-label">Extrapolation :</label>
+        <select id="extrapolation" name="extrapolation" class="form-select" >
+          <option value="">------</option>
+          {% for key, label in extrapolation %}
+            <option value="{{ key }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+       <!-- Variogramme -->
+      <div class="col-md-4">
+        <label for="variogramme" class="form-label">Variogram :<sup>Choisir le variogramme Model seulement pour la méthode krigging</sup></label>
+        <select id="variogramme" name="variogramme" class="form-select" >
+          {% for key, label in variogramme %}
+            <option value="{{ key }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Paramètres du variogramme -->
+      <div id="variogramParams" class="col-md-12 row g-3 mt-2" style="display: none;">
+        <div class="col-md-4">
+          <label for="nugget" class="form-label">Nugget :</label>
+          <input type="number" step="any" class="form-control" name="nugget" id="nugget" placeholder="ex: 0.01">
+        </div>
+        <div class="col-md-4">
+          <label for="range" class="form-label">Range :</label>
+          <input type="number" step="any" class="form-control" name="range" id="range" placeholder="ex: 12.0">
+        </div>
+        <div class="col-md-4">
+          <label for="sill" class="form-label">Sill :</label>
+          <input type="number" step="any" class="form-control" name="sill" id="sill" placeholder="ex: 1.0">
+        </div>
+      </div>
+
+
+      <!-- Template Carte -->
+      <div class="col-md-4">
+        <label for="mapModel" class="form-label">Template Carte :</label>
+        <select id="mapModel" name="mapModel" class="form-select" required>
+          {% for m in maps %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Afficher la carte</button>
+    </div>
+  </form>
+
+    <!-- Aide décade -->
+    <br><br><div class="col-md-12">
+      <small class="form-text text-muted">
+        <strong>Décade (offset)</strong> :<br>
+        <code>-1</code> : décade précédente<br>
+        <code>0</code> : décade courante<br>
+        <code>1</code> : décade suivante<br>
+        Exemple : si tu choisis <code>2025-07-12</code> et offset <code>-1 à 0</code>, tu obtiendras la première décade de Juillet et la dernière décade de Juin 2025.<br>
+        <code>0 à 1</code>, donnera les 2 premières décades de juillet 2025
+
+      </small>
+    </div>
+
+    <!-- <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const interpolationField = document.getElementById("interpolation");
+        const extrapolationField = document.getElementById("extrapolation");
+        const variogramField = document.getElementById("variogramme").closest('.col-md-4');
+
+        function toggleFields() {
+          const interpolation = interpolationField.value;
+          const extrapolation = extrapolationField.value;
+
+          if (interpolation !== "") {
+            extrapolationField.value = "";
+            extrapolationField.closest('.col-md-4').style.display = "none";
+            interpolationField.closest('.col-md-4').style.display = "block";
+
+            // variogramme si interpolation == "kriging"
+            if (interpolation === "kriging" and ) {
+              variogramField.style.display = "block";
+              variogramParams.style.display = "flex";
+            } else {
+              variogramField.style.display = "none";
+              variogramParams.style.display = "none";
+            }
+
+          } else if (extrapolation !== "") {
+            interpolationField.value = "";
+            interpolationField.closest('.col-md-4').style.display = "none";
+            extrapolationField.closest('.col-md-4').style.display = "block";
+
+            // variogramme si extrapolation == "kriging"
+            if (extrapolation === "kriging") {
+              variogramField.style.display = "block";
+              variogramParams.style.display = "flex";
+            } else {
+              variogramField.style.display = "none";
+              variogramParams.style.display = "none";
+            }
+
+          } else {
+            // Aucun des deux : afficher les deux, cacher variogramme
+            interpolationField.closest('.col-md-4').style.display = "block";
+            extrapolationField.closest('.col-md-4').style.display = "block";
+            variogramField.style.display = "none";
+            variogramParams.style.display = "none";
+          }
+        }
+
+        // Initialiser au chargement
+        toggleFields();
+
+        // Écouteurs de changement
+        interpolationField.addEventListener("change", toggleFields);
+        extrapolationField.addEventListener("change", toggleFields);
+      });
+
+      // Réexécuter au retour navigateur (ex: bouton retour)
+      window.addEventListener("pageshow", () => {
+        const event = new Event("change");
+        document.getElementById("interpolation").dispatchEvent(event);
+        document.getElementById("extrapolation").dispatchEvent(event);
+      });
+    </script> -->
+
+    <script>
+      function toggleFields() {
+        const interpolationField = document.getElementById("interpolation");
+        const extrapolationField = document.getElementById("extrapolation");
+        const variogramField = document.getElementById("variogramme");
+
+        const extrapolationDiv = extrapolationField.closest(".col-md-4");
+        const variogramDiv = variogramField.closest(".col-md-4");
+        const variogramParamsDiv = document.getElementById("variogramParams");
+
+        const interpolation = interpolationField.value;
+        const extrapolation = extrapolationField.value;
+        const variogram = variogramField.value;
+
+        // Règle 1 : cacher extrapolation si interpolation est sélectionné
+        if (interpolation !== "") {
+          extrapolationDiv.style.display = "none";
+          extrapolationField.value = "";
+        } else {
+          extrapolationDiv.style.display = "";
+        }
+
+        // Règle 2 : cacher variogram et variogramParams si ni interpolation ni extrapolation == 'kriging'
+        if (interpolation !== "kriging" && extrapolation !== "kriging") {
+          variogramDiv.style.display = "none";
+          variogramParamsDiv.style.display = "none";
+          // variogramField.value = "";
+          // Réinitialiser les champs enfants dans variogramParams
+          variogramParamsDiv.querySelectorAll("input").forEach(el => el.value = "");
+        } else {
+          variogramDiv.style.display = "";
+
+          // Règle 3 : cacher variogramParams si variogram == 'linear' ou 'power'
+          if (variogram === "linear" || variogram === "power") {
+            variogramParamsDiv.style.display = "none";
+            variogramParamsDiv.querySelectorAll("input").forEach(el => el.value = "");
+          } else {
+            variogramParamsDiv.style.display = "";
+          }
+        }
+      }
+      window.addEventListener("pageshow", toggleFields);
+      document.addEventListener("DOMContentLoaded", toggleFields);
+      document.getElementById("interpolation").addEventListener("change", toggleFields);
+      document.getElementById("extrapolation").addEventListener("change", toggleFields);
+      document.getElementById("variogramme").addEventListener("change", toggleFields);
+    </script>
+
+
+
+
+</body>
+
+{% endblock %}

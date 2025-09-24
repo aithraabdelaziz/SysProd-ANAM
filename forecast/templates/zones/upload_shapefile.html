@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Shapefile</title>
+</head>
+<body>
+    <h1>Upload Shapefile</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="shapefile_zip">Choisir un fichier ZIP contenant le Shapefile :</label>
+        <input type="file" name="shapefile_zip" accept=".zip" required>
+        <br>
+        <label for="category">Choisir une catégorie :</label>
+        <select name="category">
+            {% for option in categories %}
+                <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="feature">Choisir un nom :</label>
+        <select name="feature">
+            {% for option in features %}
+                <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit" name="action" value="upload">Télécharger</button>
+        <button type="submit" name="action" value="save">Sauvegarder</button>
+    </form>
+    
+
+    {% if shapefile %}
+    <div id="map" style="height: 400px;"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var map = L.map('map').setView([29.26340520817928, -10.413367744774774], 5);
+      
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+            var shapefileLayer = new L.GeoJSON(null, {
+                style: function (feature) {
+                    return { color: 'blue', weight: 2 };
+                }
+            });
+
+            var shapefileData = {{ shapefile|safe }};
+            shapefileLayer.addData(shapefileData);
+
+            shapefileLayer.addTo(map);
+            map.fitBounds(shapefileLayer.getBounds());
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body class="container py-5">
+    <h3 class="mb-3">Carte temps sensible - Prévision</h3>
+    <p><strong>Date :</strong> {{ date }} | <strong>Échéance :</strong> {{ echeance }}</p>
+    <div class="text-center">
+        <img src="{{ image_url }}" alt="Carte prévision" class="img-fluid border">
+    </div>
+</body>
+
+{% endblock %}

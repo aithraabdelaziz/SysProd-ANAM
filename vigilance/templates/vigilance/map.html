@@ -1,0 +1,645 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Vigilance Météo – Burkina Faso</h2>
+
+<form id="vigilance-form" method="get" action=".">
+    <div class="form-group mb-3">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="{{ form.param.id_for_label }}" class="form-label">{{ form.param.label }} :</label>
+                {{ form.param }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.date.id_for_label }}" class="form-label">{{ form.date.label }} :</label>
+                {{ form.date }}
+            </div>
+            <div class="col-md-4">
+                <label for="{{ form.source.id_for_label }}" class="form-label">{{ form.source.label }} :</label>
+                {{ form.source }}
+            </div>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#capHelpModal" style="width: 150px;position: absolute;right: 0px;background-color: #2780e3;color:white">
+                <i class="fas fa-question-circle"></i> Aide CAP XML
+            </button>
+        </div>
+    </div>
+    <div class="btn-group mb-4" role="group">
+        <button type="submit" class="btn btn-primary" style="width:150px">
+            <i class="fas fa-eye"></i> <strong>Afficher</strong>
+        </button>
+
+        <button type="button" class="btn btn-danger" id="clear" style="width:150px">
+            <i class="fas fa-trash-alt"></i> <em>Vider</em>
+        </button>
+
+        <button type="button" class="btn btn-info text-white" id="revoke" style="width:150px">
+            <i class="fas fa-sync-alt"></i> <u>Choisir Modéle</u>
+        </button>
+
+        <button type="button" class="btn btn-dark" id="cap" style="width:150px">
+            <i class="fas fa-file-code"></i> <span style="letter-spacing: 1px;">CAP XML</span>
+        </button>
+
+        <!-- Bouton pour afficher une image -->
+        <button type="button" class="btn btn-warning" id="showImage" style="width:150px">
+            <i class="fas fa-image"></i> Afficher Image
+        </button>
+
+        <!-- Bouton pour exporter -->
+        <button type="button" class="btn btn-success" id="export" style="width:150px">
+            <i class="fas fa-file-export"></i> Exporter
+        </button>
+    </div>
+
+
+</form>
+
+<div id="map">
+    {% if map %}
+        {{ map|safe }}
+    {% else %}
+        <p>Aucune carte à afficher.</p>
+    {% endif %}
+</div>
+
+<div class="folium-legend" style="margin-top: 15px;">
+    <b>Légende de vigilance :</b><br>
+    <i style="background:#00FF00; width:20px; height:20px; display:inline-block;"></i> Pas de vigilance<br>
+    <i style="background:#FFFF00; width:20px; height:20px; display:inline-block;"></i> Soyez attentif<br>
+    <i style="background:#FFA500; width:20px; height:20px; display:inline-block;"></i> Soyez très vigilant<br>
+    <i style="background:#FF0000; width:20px; height:20px; display:inline-block;"></i> Vigilance absolue<br>
+    <i style="background:#808080; width:20px; height:20px; display:inline-block;"></i> Données manquantes
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-warning">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title text-white fw-bold" id="confirmationModalLabel">Confirmation requise</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body" id="confirmationMessage"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger" id="confirmAction">Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal CAP Messages -->
+<div class="modal fade" id="capModal" tabindex="-1" aria-labelledby="capModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content border-primary">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="capModalLabel">Messages CAP</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body" id="capModalBody"></div>
+      <div style="padding: 10px;">
+          <i class="fas fa-check-circle text-success me-2"></i>
+          <strong>Common Alerting Protocol Validator : </strong>
+          <a href="https://cap-validator.appspot.com/validate" target="_blank" class="text-decoration-underline">
+            https://cap-validator.appspot.com/validate
+          </a>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="capHelpModal" tabindex="-1" aria-labelledby="capHelpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content border-primary">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="capHelpModalLabel">Aide – Balises CAP XML</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Balise</th>
+                <th>Valeurs recommandées</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>&lt;status&gt;</code></td>
+                <td>Actual, Exercise, System, Test</td>
+                <td>Statut du message (réel, test, système…)</td>
+              </tr>
+              <tr>
+                <td><code>&lt;msgType&gt;</code></td>
+                <td>Alert, Update, Cancel, Ack, Error</td>
+                <td>Type de message envoyé</td>
+              </tr>
+              <tr>
+                <td><code>&lt;scope&gt;</code></td>
+                <td>Public, Restricted, Private</td>
+                <td>Visibilité du message</td>
+              </tr>
+              <tr>
+                <td><code>&lt;responseType&gt;</code></td>
+                <td>Shelter, Evacuate, Prepare, Execute, Avoid, Monitor, Assess, None</td>
+                <td>Action recommandée</td>
+              </tr>
+              <tr>
+                <td><code>&lt;urgency&gt;</code></td>
+                <td>Immediate, Expected, Future, Past, Unknown</td>
+                <td>Délai d’action nécessaire</td>
+              </tr>
+              <tr>
+                <td><code>&lt;severity&gt;</code></td>
+                <td>Extreme, Severe, Moderate, Minor, Unknown</td>
+                <td>Niveau de gravité</td>
+              </tr>
+              <tr>
+                <td><code>&lt;certainty&gt;</code></td>
+                <td>Observed, Likely, Possible, Unlikely, Unknown</td>
+                <td>Degré de certitude</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal Bootstrap pour afficher l'image générée -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-info">
+      <!-- Header bleu avec texte blanc -->
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="imageModalLabel">Carte de vigilance météorologique</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <!-- Image avec bordure et coins arrondis -->
+        <img id="imagePreview" src="" alt="Carte vigilance" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Bootstrap pour confirmation d’export -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-success">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="successModalLabel">Export réussi</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+    <div class="modal-body">
+      ✅ Les fichiers ont été exportés avec succès.<br>
+      <hr>
+      <strong>📄 Fichiers générés :</strong>
+      <ul id="fileList" class="list-group mt-2">
+        <!-- les fichiers seront injectés ici -->
+      </ul>
+    </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="{% static 'css/vigilance_style.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script type="text/javascript">
+// Global variable pour stocker les éditeurs Ace
+let editorInstances = {};
+
+// Fonction pour formatter proprement le XML (indentation)
+function formatXml(xml) {
+  let formatted = '';
+  let reg = /(>)(<)(\/*)/g;
+  xml = xml.replace(reg, '$1\n$2$3');
+  let pad = 0;
+  xml.split('\n').forEach((node) => {
+    let indent = 0;
+    if (node.match(/.+<\/\w[^>]*>$/)) {
+      indent = 0;
+    } else if (node.match(/^<\/\w/)) {
+      if (pad !== 0) pad -= 1;
+    } else if (node.match(/^<\w([^>]*[^\/])?>.*$/)) {
+      indent = 1;
+    } else {
+      indent = 0;
+    }
+
+    const padding = new Array(pad + 1).join('  ');
+    formatted += padding + node + '\n';
+    pad += indent;
+  });
+  return formatted;
+}
+
+// Fonction pour surligner les lignes importantes dans Ace et gérer l'édition
+function highlightAndMakeEditableLines(editor) {
+  const session = editor.getSession();
+  const lines = session.getDocument().getAllLines();
+  const keywords = ['status', 'msgType', 'scope', 'urgency', 'severity', 'certainty', 'description', 'instruction', 'responseType'];
+
+  // Supprimer les anciens marqueurs importants
+  const existingMarkers = session.getMarkers(false);
+  for (const id in existingMarkers) {
+    if (existingMarkers[id].clazz === 'important-line-marker') {
+      session.removeMarker(existingMarkers[id].id);
+    }
+  }
+
+  const Range = ace.require('ace/range').Range;
+  let editableLines = new Set();
+
+  lines.forEach((line, idx) => {
+    for (const key of keywords) {
+      if (line.includes(`<${key}>`) || line.includes(`</${key}>`)) {
+        editableLines.add(idx);
+        const range = new Range(idx, 0, idx, line.length);
+        session.addMarker(range, 'important-line-marker', 'fullLine');
+        break;
+      }
+    }
+  });
+
+  // Empêcher la modification sur les lignes non éditables
+  editor.keyBinding.addKeyboardHandler({
+    handleKeyboard: function(data, hashId, keyString, keyCode, event) {
+      const cursor = editor.getCursorPosition();
+      if (!editableLines.has(cursor.row)) {
+        // Bloquer la frappe et afficher tooltip
+        showTooltip(editor.container, "Modification interdite sur cette ligne");
+        event.preventDefault();
+        return {command: "null", passEvent: false};
+      }
+    }
+  });
+}
+
+// Fonction d'affichage de tooltip temporaire
+function showTooltip(container, message) {
+  let tooltip = container.querySelector('.edit-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.className = 'edit-tooltip';
+    tooltip.style.position = 'absolute';
+    tooltip.style.background = 'rgba(255, 0, 0, 0.8)';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '4px 8px';
+    tooltip.style.borderRadius = '4px';
+    tooltip.style.fontSize = '12px';
+    tooltip.style.zIndex = 1000;
+    tooltip.style.pointerEvents = 'none';
+    container.appendChild(tooltip);
+  }
+  tooltip.textContent = message;
+  tooltip.style.opacity = '1';
+
+  // Positionne le tooltip en haut à droite de l'éditeur
+  tooltip.style.top = '5px';
+  tooltip.style.right = '5px';
+
+  clearTimeout(tooltip._timeout);
+  tooltip._timeout = setTimeout(() => {
+    tooltip.style.opacity = '0';
+  }, 1500);
+}
+
+// Initialisation de l’éditeur Ace avec formatage, surlignage et gestion d'édition
+function initCapEditor(containerId, xmlContent) {
+  const editor = ace.edit(containerId);
+  editor.setTheme("ace/theme/chrome");
+  editor.session.setMode("ace/mode/xml");
+  editor.setValue(formatXml(xmlContent), -1); // -1 place le curseur au début
+  editor.setOptions({
+    fontSize: "10pt",
+    showPrintMargin: false,
+    readOnly: false,
+    highlightActiveLine: true,
+  });
+
+  highlightAndMakeEditableLines(editor);
+
+  return editor;
+}
+
+$(document).ready(function () {
+  let actionType = null;
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      let cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+        function toggleButtons() {
+            const val = $('#id_source').val();
+
+            // Bouton "Réinitialiser" : désactivé si expert
+            if (val === 'expert') {
+                $('#revoke')
+                    .prop('disabled', true)
+                    .removeClass('btn-info text-white')
+                    .addClass('btn-disabled');
+            } else {
+                $('#revoke')
+                    .prop('disabled', false)
+                    .removeClass('btn-disabled')
+                    .addClass('btn-info text-white');
+            }
+
+            // Bouton "Vider" : désactivé si gfs
+            if (val === 'gfs') {
+                $('#clear')
+                    .prop('disabled', true)
+                    .removeClass('btn-danger')
+                    .addClass('btn-disabled');
+            } else {
+                $('#clear')
+                    .prop('disabled', false)
+                    .removeClass('btn-disabled')
+                    .addClass('btn-danger');
+            }
+        }
+
+        // Initial call
+        toggleButtons();
+
+        // On change
+        $('#id_source').change(toggleButtons);
+  function showConfirmationModal(action) {
+    actionType = action;
+    let message = '';
+    if (action === 'clear') {
+      message = `
+        <div class="text-start">
+          <p>Cette action va <strong>vider</strong> les données de vigilance pour la date sélectionnée.</p>
+          <p class="text-danger">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <strong>Attention :</strong> toute modification ou expertise saisie sera <u>perdue définitivement</u>.
+          </p>
+          <p>Souhaitez-vous vraiment continuer ?</p>
+        </div>`;
+    } else {
+      message = `
+        <div class="text-start">
+          <p>Cette action va <strong>réinitialiser</strong> les données avec le calcul automatique de la vigilance par défaut.</p>
+          <p class="text-danger">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            <strong>Attention :</strong> toute modification ou expertise saisie sera <u>perdue définitivement</u>.
+          </p>
+          <p>Souhaitez-vous vraiment continuer ?</p>
+        </div>`;
+    }
+    $('#confirmationMessage').html(message);
+    const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    modal.show();
+  }
+
+  $('#clear').click(function () {
+    showConfirmationModal('clear');
+  });
+
+  $('#revoke').click(function () {
+    showConfirmationModal('revoke');
+  });
+
+  $('#confirmAction').click(function () {
+    const url = actionType === 'clear' ? '/vigilance/clear_vigilance/' : '/vigilance/revoke_vigilance/';
+    $.ajax({
+      url: url,
+      type: 'POST',
+      contentType: 'application/json',
+      headers: {'X-CSRFToken': getCookie('csrftoken')},
+      data: JSON.stringify({
+        forecastDate: $('#id_date').val(),
+        param: $('#id_param').val(),
+      }),
+      success: function (response) {
+        location.reload();
+      },
+      error: function () {
+        alert("Une erreur est survenue lors de l'opération.");
+      }
+    });
+  });
+
+  $('#cap').click(function () {
+    $.ajax({
+      url: '/vigilance/generate_cap_messages/',
+      type: 'POST',
+      contentType: 'application/json',
+      headers: {'X-CSRFToken': getCookie('csrftoken')},
+      data: JSON.stringify({
+        forecastDate: $('#id_date').val(),
+        param: $('#id_param').val(),
+      }),
+      success: function (response) {
+        let messages = response.messages;
+        let modalBody = '<div class="accordion" id="capAccordion">';
+
+        editorInstances = {}; // reset editors
+
+        messages.forEach((msg, index) => {
+          let id = msg.id;
+          modalBody += `
+            <div class="accordion-item">
+              <input type="hidden" value="${id}" id="id_${index}"/>
+              <h2 class="accordion-header" id="heading${index}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index}" aria-expanded="false" aria-controls="collapse${index}">
+                  ${msg.zone}
+                </button>
+              </h2>
+              <div id="collapse${index}" class="accordion-collapse collapse" aria-labelledby="heading${index}" data-bs-parent="#capAccordion">
+                <div class="accordion-body">
+                  <button class="btn btn-sm btn-outline-primary mb-2" onclick="copyEditor(${index}, this)">
+                    <i class="fas fa-copy"></i> Copier XML
+                  </button>
+                  <button class="btn btn-sm btn-outline-success mb-2" onclick="saveEditor(${index})">
+                    <i class="fas fa-save"></i> Sauvegarder
+                  </button>
+                  <div id="capEditor${index}" class="cap-editor" style="height: 300px; width: 100%; border: 1px solid #ddd;"></div>
+                  <input type="hidden" id="capContent${index}">
+                </div>
+              </div>
+            </div>`;
+        });
+
+        modalBody += '</div>';
+        $('#capModalBody').html(modalBody);
+
+        // Afficher le modal
+        const modal = new bootstrap.Modal(document.getElementById('capModal'));
+        modal.show();
+
+        // Initialiser les éditeurs avec formatage et surlignage
+        setTimeout(() => {
+          messages.forEach((msg, index) => {
+            editorInstances[index] = initCapEditor(`capEditor${index}`, msg.cap);
+          });
+        }, 300);
+      },
+      error: function () {
+        alert("Une erreur est survenue lors de l'opération.");
+      }
+    });
+  });
+});
+
+// Copier le contenu d'un éditeur dans le presse-papiers
+function copyEditor(index, btn) {
+  const content = editorInstances[index].getValue();
+  navigator.clipboard.writeText(content).then(() => {
+    btn.innerHTML = '<i class="fas fa-check"></i> Copié';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fas fa-copy"></i> Copier XML';
+      btn.disabled = false;
+    }, 3000);
+  });
+}
+
+// Fonction pour afficher un tooltip bleu de succès
+function showSuccessTooltip(container, message) {
+  let tooltip = container.querySelector('.success-tooltip');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.className = 'success-tooltip';
+    tooltip.style.position = 'absolute';
+    tooltip.style.background = 'rgba(0, 123, 255, 0.85)'; // bleu bootstrap
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '6px 12px';
+    tooltip.style.borderRadius = '4px';
+    tooltip.style.fontSize = '14px';
+    tooltip.style.zIndex = 1000;
+    tooltip.style.pointerEvents = 'none';
+    tooltip.style.transition = 'opacity 0.3s ease';
+    container.appendChild(tooltip);
+  }
+  tooltip.textContent = message;
+  tooltip.style.opacity = '1';
+
+  // Positionne le tooltip en haut à droite
+  tooltip.style.top = '5px';
+  tooltip.style.right = '5px';
+
+  clearTimeout(tooltip._timeout);
+  tooltip._timeout = setTimeout(() => {
+    tooltip.style.opacity = '0';
+  }, 2000);
+}
+
+// Sauvegarder les modifications du XML vers le serveur
+function saveEditor(index) {
+  const xmlContent = editorInstances[index].getValue();
+  console.log("XML modifié :", xmlContent);
+
+  $.ajax({
+    url: '/vigilance/save_cap/',
+    type: 'POST',
+    contentType: 'application/json',
+    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+    data: JSON.stringify({
+      idZone: $(`#id_${index}`).val(),
+      capXml: xmlContent
+    }),
+    success: () => {
+      // Affiche le tooltip bleu dans le conteneur de l'éditeur
+      const editorContainer = document.getElementById(`capEditor${index}`);
+      showSuccessTooltip(editorContainer, "Modification enregistrée !");
+    },
+    error: () => {
+      const editorContainer = document.getElementById(`capEditor${index}`);
+      showSuccessTooltip(editorContainer, "Erreur lors de l'enregistrement.");    }
+  });
+}
+$('#showImage').click(function () {
+    $.ajax({
+        url: '/vigilance/show_image/',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: {'X-CSRFToken': getCookie('csrftoken')},
+        data: JSON.stringify({
+            forecastDate: $('#id_date').val(),
+            param: $('#id_param').val(),
+        }),
+        success: function(response) {
+          if (response.success) {
+            $('#imagePreview').attr('src', 'data:image/png;base64,' + response.image_base64);
+            var imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+            imageModal.show();
+          } else {
+            alert('Erreur : ' + response.error);
+          }
+        }
+    });
+});
+
+$('#export').click(function () {
+    $.ajax({
+        url: '/vigilance/export/',
+        type: 'POST',
+        contentType: 'application/json',
+        headers: {'X-CSRFToken': getCookie('csrftoken')},
+        data: JSON.stringify({
+            forecastDate: $('#id_date').val(),
+            param: $('#id_param').val(),
+        }),
+        success: function (response) {
+            if (response.success) {
+                const fileList = $('#fileList');
+                fileList.empty();
+                response.file_list.forEach(file => {
+                    fileList.append(`<li class="list-group-item">${file}</li>`);
+});
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            } else {
+                alert('❌ Erreur : ' + response.error);
+            }
+        }
+    });
+});
+
+// getCookie() utilisé dans saveEditor, on peut la définir globalement
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+
+{% endblock %}

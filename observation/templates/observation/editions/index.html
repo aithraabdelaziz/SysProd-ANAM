@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    body {
+      background: #f0f2f5;
+    }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+    }
+    .card:nth-child(1) .card-icon {
+      color: #0d6efd; /* bleu Bootstrap */
+    }
+    .card:nth-child(2) .card-icon {
+      color: #198754; /* vert */
+    }
+    .card:nth-child(3) .card-icon {
+      color: #6610f2; /* violet pour carte */
+    }
+  </style>
+  <div class="container py-5">
+    <h2 class="mb-5 text-center display-5 fw-bold">
+      <i class="bi bi-eye-fill me-2 text-primary"></i>
+      Observations Météorologiques
+    </h2>
+
+    <div class="row justify-content-center g-4">
+      <!-- Card 1 -->
+      <div class="col-md-5 col-lg-4">
+        <div class="card text-center p-4 bg-light h-100">
+          <div class="card-body">
+            <i class="bi bi-pencil-square card-icon mb-3 fs-1 text-success"></i>
+            <h5 class="card-title">Éditer / Valider</h5>
+            <p class="card-text">Modifier ou valider les Observations automatiques.</p>
+            <a href="{% url 'observation:select_localite' %}" class="btn btn-outline-success">Modifier</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="col-md-5 col-lg-4">
+        <div class="card text-center p-4 bg-white h-100">
+          <div class="card-body">
+            <i class="bi bi-map-fill card-icon mb-3 fs-1 text-info"></i>
+            <h5 class="card-title">Cartes des Observations</h5>
+            <p class="card-text">Visualiser les Observations sur une carte interactive.</p>
+            <a href="{% url 'chartmet:obs_index' %}" class="btn btn-outline-info">Afficher</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

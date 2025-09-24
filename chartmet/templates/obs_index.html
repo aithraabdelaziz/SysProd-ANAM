@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="mb-4">Choisir un type de carte</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Carte temps sensible - Observation</h5>
+                    <p class="card-text">Consulter les observations météo récentes.</p>
+                    <a href="{% url 'chartmet:sensitive_obsmap' %}" class="btn btn-primary mt-auto">Voir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Cartes Spatialisées</h5>
+                    <p class="card-text">Explorer les cartes avec des données extrapolées sur une zone.</p>
+                    <a href="{% url 'chartmet:extrapolated_map_form' %}" class="btn btn-primary mt-auto">Afficher</a>
+                </div>
+            </div>
+        </div>
+
+         <div class="col">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Cartes Spatialisées Pré-configuré</h5>
+                    <p class="card-text">Echéance et paramètre préconfiguré</p>
+                    <a href="{% url 'chartmet:extrapolated_mapPreconfigured_form' %}" class="btn btn-primary mt-auto">Afficher</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

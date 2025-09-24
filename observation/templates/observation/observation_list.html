@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Gestion des Observations</h1>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="form-inline">
+            <div class="row g-3">
+                {% for field in filter_form %}
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Filtrer</button>
+                    <a href="?" class="btn btn-secondary">Réinitialiser</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<a href="{% url 'observation:observation_create' %}" class="btn btn-success mb-3">Ajouter une Observation</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Station</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Paramètre</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for observation in observations %}
+        <tr>
+            <td>{{ observation.station }}</td>
+            <td>{{ observation.date|date:"d/m/Y" }}</td>
+            <td>{{ observation.heure }}</td>
+            <td>{{ observation.parametre }}</td>
+            <td>
+                <a href="{% url 'observation:observation_update' observation.pk %}" class="btn btn-sm btn-primary">Modifier</a>
+                <a href="{% url 'observation:observation_delete' observation.pk %}" class="btn btn-sm btn-danger">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Aucune observation trouvée</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Précédent</a>
+        </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+        </li>
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Suivant</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}

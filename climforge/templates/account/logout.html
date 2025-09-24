@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="logout-message">
+    <h2>Déconnexion réussie</h2>
+    <p>Vous avez été déconnecté avec succès.</p>
+    <a href="{% url 'login' %}" class="btn">Se reconnecter</a>
+    <a href="/" class="btn">Retour à l'accueil</a>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Sélection d’une Station pour <strong>{{ localite.name }}</strong></h2>
+
+  <div class="mb-4 text-center">
+    <input type="text" id="statSearch" class="form-control w-50 mx-auto" placeholder="Rechercher une station...">
+  </div>
+
+  <div class="row g-4" id="statList">
+    {% for stat in stations %}
+      <div class="col-md-4 stat-card" data-name="{{ stat.name|lower }}">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ stat.name }}</h5>
+            <p class="text-muted">{{ stat.category }}</p>
+            <a href="{% url 'observation:select_date' localite.id stat.id %}" class="btn btn-outline-primary mt-2">
+              Séléctionner
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Aucune station disponible.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.getElementById('statSearch').addEventListener('input', function () {
+    let input = this.value.toLowerCase();
+    document.querySelectorAll('.stat-card').forEach(function (card) {
+      const statName = card.getAttribute('data-name');
+      card.style.display = statName.includes(input) ? 'block' : 'none';
+    });
+  });
+</script>
+{% endblock %}

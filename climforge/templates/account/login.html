@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
+    <h3 class="card-title text-center mb-4">Connexion</h3>
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger" role="alert">
+        {% for error in form.non_field_errors %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label for="id_username" class="form-label">Nom d'utilisateur</label>
+        <input type="text" name="username" id="id_username"
+               class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+               value="{{ form.username.value|default_if_none:'' }}" required>
+        {% if form.username.errors %}
+          <div class="invalid-feedback">
+            {{ form.username.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_password" class="form-label">Mot de passe</label>
+        <input type="password" name="password" id="id_password"
+               class="form-control {% if form.password.errors %}is-invalid{% endif %}" required>
+        {% if form.password.errors %}
+          <div class="invalid-feedback">
+            {{ form.password.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Se connecter</button>
+      </div>
+    </form>
+
+    <div class="text-center mt-3">
+      <a href="/admin/" class="text-decoration-none">Accès administrateur</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

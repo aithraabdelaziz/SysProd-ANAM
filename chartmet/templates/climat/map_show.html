@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body class="container py-5">
+    <h3 class="mb-3">Carte Climatologie</h3>
+      
+    <p><strong>Date :</strong> {{ date_fcst }}</p>
+    <div class="text-center"  style="max-width: 800px; margin: 0 auto;">
+        <img src="{{ png }}" alt="Carte prévision" class="img-fluid border">
+    </div>
+</body>
+
+{% endblock %}

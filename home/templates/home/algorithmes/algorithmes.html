@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - WeatherFusion</title>
+    <!-- Intégration de Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJZsqeR1mO1eY3xYyYo8rZgg1fmb7gR5f7Ckz5ZW5hEjEOt1xC9MZ7aNkX2t" crossorigin="anonymous">
+{% endblock %}
+{% block extra_css %}    
+<style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .header-section {
+            background-color: #0056b3;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        .section-title {
+            color: #0056b3;
+        }
+        .content-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+        }
+        .btn-custom:hover {
+            background-color: #004099;
+        }
+        .footer {
+            background-color: #003366;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <!-- Section d'En-tête -->
+    <header class="header-section">
+        <div class="container">
+            <h1 class="display-4">Documentation WeatherFusion</h1>
+            <p class="lead">Votre guide complet pour comprendre et utiliser WeatherFusion efficacement.</p>
+        </div>
+    </header>
+
+    <!-- Section Introduction -->
+    <section class="container my-5">
+        <div class="content-section">
+            <h2 class="section-title">Introduction</h2>
+            <p>WeatherFusion est un outil puissant permettant de produire des bulletins météorologiques professionnels personnalisés, adaptés à vos besoins spécifiques. Cette documentation vous guidera à travers les fonctionnalités clés de l'application et vous aidera à configurer et gérer vos bulletins en toute simplicité.</p>
+        </div>
+    </section>
+
+    <!-- Section Fonctionnalités -->
+    <section class="container my-5">
+        <div class="content-section">
+            <h2 class="section-title">Fonctionnalités Principales</h2>
+            <p>WeatherFusion offre une multitude de fonctionnalités pour optimiser la création et la gestion de vos bulletins météorologiques :</p>
+            <ul>
+                <li><strong>Personnalisation des bulletins :</strong> Modifiez la mise en page et le contenu des bulletins en fonction de vos besoins.</li>
+                <li><strong>Gestion des utilisateurs :</strong> Gérez facilement vos utilisateurs et clients, suivez leur activité et adaptez les bulletins selon leurs préférences.</li>
+                <li><strong>Suivi de la transmission :</strong> Assurez-vous que vos bulletins sont correctement envoyés et reçus, et suivez leur statut.</li>
+                <li><strong>Intégration avec des modèles numériques :</strong> WeatherFusion se connecte facilement aux systèmes de génération de données météorologiques pour une précision maximale.</li>
+                <li><strong>Configuration flexible :</strong> Personnalisez l'application selon vos besoins spécifiques pour un flux de travail optimisé.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section Gestion des utilisateurs -->
+    <section class="container my-5">
+        <div class="content-section">
+            <h2 class="section-title">Gestion des Utilisateurs</h2>
+            <p>WeatherFusion vous permet de gérer vos utilisateurs et clients avec facilité. Voici les principales fonctionnalités liées à la gestion des utilisateurs :</p>
+            <ul>
+                <li><strong>Création et suppression d'utilisateurs :</strong> Ajoutez de nouveaux utilisateurs ou supprimez des comptes obsolètes.</li>
+                <li><strong>Rôles et permissions :</strong> Définissez des rôles (administrateur, utilisateur, client) et attribuez des permissions spécifiques à chaque utilisateur.</li>
+                <li><strong>Suivi des actions :</strong> Visualisez les actions effectuées par vos utilisateurs pour un suivi en temps réel de leur activité.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section Paramètres de configuration -->
+    <section class="container my-5">
+        <div class="content-section">
+            <h2 class="section-title">Paramètres de Configuration</h2>
+            <p>WeatherFusion vous permet de configurer plusieurs aspects de l'application pour mieux répondre à vos besoins :</p>
+            <ul>
+                <li><strong>Personnalisation des bulletins :</strong> Choisissez les données et la mise en page que vous souhaitez inclure dans vos bulletins.</li>
+                <li><strong>Connexion aux systèmes de génération de données :</strong> Intégrez facilement WeatherFusion avec les modèles numériques du temps pour récupérer des données météorologiques précises.</li>
+                <li><strong>Paramétrage des options de transmission :</strong> Configurez les systèmes de transmission des bulletins et ajustez les paramètres en fonction de vos besoins.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section Support & Assistance -->
+    <section class="container my-5">
+        <div class="content-section">
+            <h2 class="section-title">Support et Assistance</h2>
+            <p>Si vous avez des questions ou besoin d'assistance, nous sommes là pour vous aider :</p>
+            <ul>
+                <li><strong>FAQ :</strong> Consultez notre foire aux questions pour des réponses rapides aux problèmes courants.</li>
+                <li><strong>Support technique :</strong> Contactez notre équipe de support pour toute assistance technique via le formulaire de contact.</li>
+                <li><strong>Forum communautaire :</strong> Participez à notre forum pour poser des questions et partager des conseils avec d'autres utilisateurs de WeatherFusion.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Section Contact -->
+    <section class="container my-5">
+        <div class="content-section">
+            <h2 class="section-title">Contactez-nous</h2>
+            <p>Pour toute demande d'information supplémentaire, n'hésitez pas à nous contacter :</p>
+            <p>Email : <a href="mailto:support@weatherfusion.com">support@weatherfusion.com</a></p>
+            <p>Téléphone : +212 000 00 00 00</p>
+            <a href="mailto:support@weatherfusion.com" class="btn btn-custom">Envoyer un email</a>
+        </div>
+    </section>
+
+{% endblock content %}

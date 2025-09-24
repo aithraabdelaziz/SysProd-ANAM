@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  {% if msg %}
+    <div class="alert alert-info text-center" role="alert">
+      {{ msg }}
+    </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="text-primary">
+      <i class="bi bi-file-earmark-text"></i> Gérer les Bulletins
+    </h2>
+    <a href="{% url 'bulletins:add_bulletin' %}" class="btn btn-success">
+      <i class="bi bi-plus-circle"></i> Ajouter un Bulletin
+    </a>
+  </div>
+
+  <table class="table table-hover table-bordered">
+    <thead class="table-primary">
+      <tr>
+        <th scope="col"><i class="bi bi-card-text"></i> Nom</th>
+        <th scope="col"><i class="bi bi-toggle-on"></i> Statut</th>
+        <th scope="col"><i class="bi bi-gear"></i> Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for B in bulletins %}
+        <tr class="align-middle">
+          <th scope="row">{{ B.name }}</th>
+          <td>
+            <form action="{% url 'bulletins:bulletin_deactivate' pk=B.pk %}" method="post">
+              {% csrf_token %}
+              {% if B.active %}
+                <button type="submit" class="btn btn-warning btn-sm">
+                  <i class="bi bi-eye-slash"></i> Désactiver
+                </button>
+              {% else %}
+                <button type="submit" class="btn btn-success btn-sm">
+                  <i class="bi bi-eye"></i> Activer
+                </button>
+              {% endif %}
+            </form>
+          </td>
+          <td>
+            <a href="{% url 'bulletins:bulletin_update' pk=B.pk %}" class="btn btn-primary btn-sm">
+              <i class="bi bi-pencil-square"></i> Modifier
+            </a>
+            <a href="{% url 'bulletins:bulletin_delete' pk=B.pk %}" class="btn btn-danger btn-sm" onclick="return confirmDelete();">
+              <i class="bi bi-trash"></i> Supprimer
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3" class="text-center">Aucun bulletin disponible.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="text-end mt-3">
+    <a href="{% url 'bulletins:add_bulletin' %}" class="btn btn-outline-success">
+      <i class="bi bi-plus-circle"></i> Ajouter un Bulletin
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <!-- Bootstrap Icons (si ce n’est pas déjà chargé dans base.html) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script>
+    function confirmDelete() {
+      return confirm("Êtes-vous sûr de vouloir supprimer ce bulletin ?");
+    }
+  </script>
+{% endblock %}

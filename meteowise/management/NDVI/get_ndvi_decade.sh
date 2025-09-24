@@ -1,0 +1,2 @@
+$HOME/ANAM/cfenv/bin/python $HOME/ANAM/climforge/meteowise/management/NDVI/decade_anomaly_ndvi_burkina.py
+$HOME/ANAM/cfenv/bin/python $HOME/ANAM/climforge/meteowise/management/NDVI/decade_diff_ndvi_burkina.py

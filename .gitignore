@@ -1,0 +1,28 @@
+__pycache__/
+.env
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Environnement virtuel
+venv/
+env/
+
+# Django
+*.log
+staticfiles/
+media/
+
+# VSCode / IDEs
+.vscode/
+.idea/
+
+# Secrets
+*.env
+# Fichiers de configuration
+config.yaml
+config.yml
+*.yaml
+*.yml
+config/*.yaml    # Tous les YAML dans le dossier config/

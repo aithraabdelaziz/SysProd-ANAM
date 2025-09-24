@@ -1,0 +1,106 @@
+#map {background-color: white !important;}
+#title-vigilance {
+    font-family: "Quicksand", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #145e9a;
+}
+.color-btn.selected {
+    border: 3px solid black;
+}
+.vig-0{
+    color:#00FF00;
+}
+.vig-1{
+    color:#FFFF00;
+}
+.vig-2{
+    color:#FFA500;
+}
+.vig-3{
+    color:#FF0000;
+}
+/* Style du formulaire */
+.form-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.form-inline .form-control {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 150px;
+  transition: border-color 0.3s ease;
+}
+
+.form-inline .form-control:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 5px rgba(59,130,246,0.5);
+}
+
+.form-inline .btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-inline .btn:hover {
+  background-color: #2563eb;
+}
+
+/* Style de la légende */
+.folium-legend {
+    position: fixed;
+    bottom: 50px;
+    right: 20px;
+    width: 185px;
+    background-color: white;
+    border: 2px solid grey;
+    z-index: 9999;
+    font-size: 14px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+
+.folium-legend b {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.folium-legend i {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+}
+
+.folium-legend .green { background: #00FF00; }
+.folium-legend .yellow { background: #FFFF00; }
+.folium-legend .orange { background: #FFA500; }
+.folium-legend .red { background: #FF0000; }
+.folium-legend .grey { background: #808080; }
+.cap-editor {
+    height: 300px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

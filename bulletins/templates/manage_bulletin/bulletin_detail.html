@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<style>
+    .center-text {
+        text-align: center;
+    }
+    .block-forecast-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .block-forecast-table th, .block-forecast-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .block-forecast-table th {
+        background-color: #f2f2f2;
+    }
+    .image-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px; /* Espacement entre l'image et le tableau */
+    }
+    .download-button {
+        text-align: center;
+        margin: 20px;
+    }
+</style>
+
+<div id="bulletinContent">
+    {% if object.header_text %}
+    <div>
+        <h2>En-tête</h2>
+        <p>{{ object.header_text }}</p>
+    </div>
+    {% endif %}
+    {% if object.header_image %}
+    <div class="image-container">
+        <img src="{{ object.header_image.url }}" width=100% height="240" alt="Header Image">
+    </div>
+    {% endif %}
+    <div class="center-text">
+        <h1>{{ object.bulletin_title }}</h1>
+        <p>{{ object.subtitle }}</p>
+        <p>Date d'établissement: {{ object.established_date }}</p>
+    </div>
+
+    <!-- Afficher les zones géographiques associées -->
+    <!-- {% if object.geographic_areas.all %}
+    <div>
+        <h2>Zones géographiques associées</h2>
+        <ul>
+            {% for geographic_area in object.geographic_areas.all %}
+                <li>{{ geographic_area.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %} -->
+
+    <!-- Afficher les paramètres associés -->
+    <!-- {% if object.parameters.all %}
+    <div>
+        <h2>Paramètres associés</h2>
+        <ul>
+            {% for parameter in object.parameters.all %}
+                <li>{{ parameter.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %} -->
+
+    <!-- Afficher le contenu flexible -->
+    {% if object.content %}
+        <div class="streamfield-content">
+            {% for block in object.content %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Afficher le contenu flexible du corps -->
+    {% if object.body %}
+        <div class="streamfield-content">
+            {% for block in object.body %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Ajoute d'autres sections du bulletin ici -->
+    {% if object.footer_text %}
+    <div>
+        <h2>Pied de page</h2>
+        <p>{{ object.footer_text }}</p>
+    </div>
+    {% endif %}
+    {% if object.footer_image %}
+    <div class="image-container">
+        <img src="{{ object.footer_image.url }}" width=100% height="150" alt="Footer Image">
+    </div>
+    {% endif %}
+</div>
+
+<div class="download-button">
+    <button id="downloadPDF" class="btn btn-primary" onclick="generatePDF()">Télécharger PDF</button>
+</div>
+
+{% endblock %}
+
+
+
+<script>
+    function generatePDF() {
+        console.log("Button clicked");
+        var { jsPDF } = window.jspdf;
+
+        html2canvas(document.getElementById('bulletinContent'), { scale: 2 }).then(canvas => {
+            var imgData = canvas.toDataURL('image/png');
+            var pdf = new jsPDF('p', 'mm', 'a4');
+            var imgWidth = 210;
+            var pageHeight = 295;
+            var imgHeight = canvas.height * imgWidth / canvas.width;
+            var heightLeft = imgHeight;
+            var position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('{{ object.bulletin_title }}.pdf');
+        }).catch(function(error) {
+            console.error("Error generating PDF:", error);
+        });
+    }
+</script>

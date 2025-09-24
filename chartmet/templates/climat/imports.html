@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    body {
+      background: #f0f2f5;
+    }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+    }
+    .card:nth-child(1) .card-icon {
+      color: #0d6efd; /* bleu Bootstrap */
+    }
+    .card:nth-child(2) .card-icon {
+      color: #198754; /* vert */
+    }
+    .card:nth-child(3) .card-icon {
+      color: #6610f2; /* violet pour carte */
+    }
+  </style>
+  <div class="container py-5">
+    <h2 class="mb-5 text-center display-5 fw-bold">
+      <i class="bi bi-eye-fill me-2 text-primary"></i>
+      Climatologie
+    </h2>
+    
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card text-center p-4 bg-white">
+          <div class="card-body">
+            <i class="bi bi-upload card-icon mb-3"></i><i class="bi bi-filetype-csv"></i>
+            <h5 class="card-title">Import via CSV </h5>
+            <p class="card-text">Charger des données climatique via des fichiers csv</p>
+            <a href="{% url 'observation:csv_import_climatmois_view' %}" class="btn btn-outline-primary">Afficher</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center p-4 bg-white">
+          <div class="card-body">
+            <i class="bi bi-upload card-icon mb-3"></i><i class="bi bi-file-earmark-binary"></i>
+            <h5 class="card-title">Import via GRIB</h5>
+            <p class="card-text">Charger des données climatique via des fichiers grib</p>
+            <a href="{% url 'observation:grib_import_view' %}" class="btn btn-outline-primary">Afficher</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center p-4 bg-white">
+          <div class="card-body">
+            <i class="bi bi-upload card-icon mb-3"></i><i class="bi bi-file-earmark-bar-graph"></i>
+            <h5 class="card-title">Import via NETCDF</h5>
+            <p class="card-text">Charger des données climatique via des fichiers netcdf</p>
+            <a href="{% url 'observation:netcdf_import_view' %}" class="btn btn-outline-primary">Afficher</a>
+          </div>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+{% endblock %}

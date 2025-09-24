@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Résultats de la diffusion</h2>
+  <p><strong>Bulletin :</strong> {{ bulletin.name }}
+  
+  <table class="table table-striped table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Client</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in results %}
+        <tr>
+          <td>{{ res.client }}</td>
+          <td>
+            {% if '✔️' in res.status %}
+              <span class="text-success">{{ res.status }}</span>
+            {% elif '❌' in res.status %}
+              <span class="text-danger">{{ res.status }}</span>
+            {% else %}
+              {{ res.status }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <a href="{% url 'dissiminate:diffusion' %}" class="btn btn-secondary mt-3">Retour</a>
+</div>
+{% endblock %}

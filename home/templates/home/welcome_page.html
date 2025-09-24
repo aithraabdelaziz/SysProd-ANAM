@@ -1,0 +1,262 @@
+{% load i18n wagtailcore_tags %}
+{% load static %}
+
+{% load wagtailusers_tags %}
+{% load wagtailsettings_tags wagtailimages_tags %}
+{% get_settings %}
+
+{% block title %}
+	<title>{% if settings.administrate.OrganisationSetting.name_site %}
+          {{settings.administrate.OrganisationSetting.name_site }}{% else %} SysProd
+        {% endif %} - Outil de Production Météorologique Personnalisé</title>
+{% endblock %}
+{% block extra_css %}
+ 	<style>
+        
+    
+        :root {
+            --primary: #0056b3;
+            --secondary: #003366;
+            --accent: #33a1ff;
+        }
+        .hero {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            padding: 5rem 0;
+        }
+        .module-card {
+            border-left: 4px solid var(--accent);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+        }
+        .icon-lg {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            padding: 0.5rem 1.5rem;
+        }
+        .sewi{color:white;}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {% if settings.administrate.OrganisationSetting.favicon %}
+          {% image settings.administrate.OrganisationSetting.favicon width-80 height-80 alt="sys logo" class="mb-4" %}
+        {% endif %} 
+                <h1 class="display-4 fw-bold mb-3">Système {% if settings.administrate.OrganisationSetting.name_site %}
+          {{settings.administrate.OrganisationSetting.name_site }}{% else %} SysProd
+        {% endif %}</h1>
+                <p class="lead mb-4 sewi">Modernisation des services météorologiques et agrométéorologiques du Burkina Faso</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Introduction -->
+
+<section id="climforge-system" class="section-bg py-5">
+      <div class="container">
+        <div class="section-header text-center mb-5">
+          <h2>{% if settings.administrate.OrganisationSetting.name_site %}
+          {{settings.administrate.OrganisationSetting.name_site }}{% else %} SysProd
+        {% endif %}</h2>
+          <p class="lead">Plateforme intelligente de production météorologique</p>
+        </div>
+
+        <div class="row align-items-center">
+          <!-- Illustration -->
+          <div class="col-lg-5 mb-4 mb-lg-0">
+            {% if settings.administrate.OrganisationSetting.favicon %}
+          {% image settings.administrate.OrganisationSetting.favicon width-400 height-400 alt="sys logo" class="img-fluid rounded shadow"%}
+        {% endif %}
+          </div>
+
+          <!-- Description -->
+          <div class="col-lg-7">
+            <div class="system-description ps-lg-4">
+              <p class="fw-bold mb-4">{% if settings.administrate.OrganisationSetting.name_site %}
+          {{settings.administrate.OrganisationSetting.name_site }}{% else %} SysProd
+        {% endif %} révolutionne la production d'informations météorologiques grâce à son approche intégrée :</p>
+              
+              <ul class="feature-list mb-4">
+                <li><i class="bi bi-arrow-repeat text-primary me-2"></i> <strong>Automatisation complète</strong> de la chaîne de production</li>
+                <li><i class="bi bi-sliders text-primary me-2"></i> <strong>Templates configurables</strong> pour tous types de bulletins</li>
+                <li><i class="bi bi-broadcast text-primary me-2"></i> <strong>Diffusion intelligente</strong> adaptée à chaque canal</li>
+                <li><i class="bi bi-shield-check text-primary me-2"></i> <strong>Contrôle qualité</strong> intégré à chaque étape</li>
+              </ul>
+
+              <div class="highlight-box p-4 bg-light rounded border-start border-4 border-primary">
+                <p class="mb-0">"Notre système unifie données brutes, expertise métier et technologies modernes pour fournir des prévisions <strong>précises</strong>, <strong>personnalisées</strong> et <strong>accessibles</strong> en temps réel."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Points clés -->
+        <div class="row mt-5 g-4">
+          <div class="col-md-4">
+            <div class="key-point card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="icon-lg mb-3 text-primary">
+                  <i class="bi bi-lightning-charge"></i>
+                </div>
+                <h5>Rapidité</h5>
+                <p class="small">Production de bulletins en quelques minutes au lieu d'heures</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="key-point card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="icon-lg mb-3 text-primary">
+                  <i class="bi bi-patch-check"></i>
+                </div>
+                <h5>Fiabilité</h5>
+                <p class="small">Validation systématique par des algorithmes et experts</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="key-point card h-100 border-0 shadow-sm">
+              <div class="card-body text-center">
+                <div class="icon-lg mb-3 text-primary">
+                  <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h5>Évolutivité</h5>
+                <p class="small">Architecture modulaire pour intégrer de nouvelles données</p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</section>
+            
+
+<!-- Key Features -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Fonctionnalités Principales</h2>
+        <div class="row g-4">
+            <!-- Feature 1 -->
+            <div class="col-md-4">
+                <div class="module-card card p-4 h-100">
+                    <div class="icon-lg mb-3 text-center">
+                        <i class="bi bi-cloud-arrow-down"></i>
+                    </div>
+                    <h4 class="text-center">Collecte Automatisée</h4>
+                    <ul>
+                        <li>Intégration des données des modèles</li>
+                        <li>Récupération des observations</li>
+                        <li>Normalisation des formats</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="col-md-4">
+                <div class="module-card card p-4 h-100">
+                    <div class="icon-lg mb-3 text-center">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h4 class="text-center">Production de Bulletins</h4>
+                    <ul>
+                        <li>Génération automatique</li>
+                        <li>Templates personnalisables</li>
+                        <li>Validation experte intégrée</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="col-md-4">
+                <div class="module-card card p-4 h-100">
+                    <div class="icon-lg mb-3 text-center">
+                        <i class="bi bi-broadcast"></i>
+                    </div>
+                    <h4 class="text-center">Diffusion Multi-canal</h4>
+                    <ul>
+                        <li>Alertes CAP-XML</li>
+                        <li>SMS automatisés</li>
+                        <li>Affichage public</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- System Modules -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Modules du Système</h2>
+        <div class="row g-4">
+            <!-- Module 1 -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <h4><i class="bi bi-database me-2"></i> API d'Ingestion</h4>
+                    <p>Middleware robuste pour connecter et normaliser les données provenant de :</p>
+                    <ul>
+                        <li>Modèles numériques (AROME, GFS)</li>
+                        <li>Stations météorologiques</li>
+                        <li>Bases climatologiques</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Module 2 -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <h4><i class="bi bi-file-earmark-text me-2"></i> Production de Bulletins</h4>
+                    <p>Système automatisé et configurable par template :</p>
+                    <ul>
+                        <li>Génération à partir de modèles prédéfinis</li>
+                        <li>Personnalisation des formats (PDF, HTML, TXT)</li>
+                        <li>Intégration automatique des données</li>
+                        <li>Validation experte avant diffusion</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Module 3 -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <h4><i class="bi bi-map me-2"></i> Vigilance Météo</h4>
+                    <p>Système intégré d'alertes avec :</p>
+                    <ul>
+                        <li>Cartographie interactive</li>
+                        <li>Seuils configurables</li>
+                        <li>Génération CAP-XML</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Module 4 -->
+            <div class="col-md-6">
+                <div class="card p-4 h-100">
+                    <h4><i class="bi bi-people me-2"></i> Gestion Utilisateurs</h4>
+                    <p>Administration fine des accès :</p>
+                    <ul>
+                        <li>Rôles personnalisés</li>
+                        <li>Permissions modulaires</li>
+                        <li>Intégration Wagtail</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

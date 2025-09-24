@@ -1,0 +1,6 @@
+postgres:
+  dbname: *****   # must be "database", NOT "dbname"
+  user: *****
+  password: "*****"          # or your actual password
+  host: localhost
+  port: 5432

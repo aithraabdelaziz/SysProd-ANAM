@@ -1,0 +1,174 @@
+---------0-854-0-002
+*******wind_from_direction : 270; False
+*******wind_speed : 0/10; False
+---------0-854-0-004
+*******air_temperature_min : 23; False
+*******air_temperature_max : 37; False
+*******air_pressure_at_sea_level : 973.7/978.7; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 36/86; False
+---------0-854-0-005
+*******air_temperature_min : 24; False
+*******air_temperature_max : 38; False
+*******air_pressure_at_sea_level : 972.9/978.6; False
+*******wind_from_direction : 180; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 34/94; False
+---------0-854-0-021
+*******air_temperature_min : 26; False
+*******air_temperature_max : 38; False
+*******air_pressure_at_sea_level : 968.7/973.3; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/15; False
+*******relative_humidity : 35/70; False
+---------0-854-0-033
+*******air_temperature_min : 26; False
+*******air_temperature_max : 39; False
+*******air_pressure_at_sea_level : 978.0/983.2; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/5; False
+*******relative_humidity : 35/74; False
+---------0-854-0-034
+*******air_temperature_min : 21; False
+*******air_temperature_max : 38; False
+*******wind_from_direction : 90; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 41/100; False
+---------0-854-0-040
+*******air_temperature_min : 27; False
+*******air_temperature_max : 39; False
+*******air_pressure_at_sea_level : 971.4/976.2; False
+*******wind_from_direction : 225; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 25/66; False
+---------0-854-0-041
+*******air_temperature_min : 25; False
+*******air_temperature_max : 39; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 32/79; False
+---------0-854-0-042
+*******air_temperature_min : 26; False
+*******air_temperature_max : 38; False
+*******air_pressure_at_sea_level : 974.3/978.7; False
+*******wind_from_direction : 315; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 35/84; False
+---------0-854-0-049
+*******air_temperature_min : 28; False
+*******air_temperature_max : 39; False
+*******air_pressure_at_sea_level : 959.6/964.5; False
+*******wind_from_direction : 360; False
+*******wind_speed : 30/60; False
+*******relative_humidity : 35/70; False
+---------0-854-0-050
+*******air_temperature_min : 26; False
+*******air_temperature_max : 37; False
+*******wind_from_direction : 315; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 41/77; False
+---------0-854-0-051
+*******air_temperature_min : 30; False
+*******air_temperature_max : 41; False
+*******air_pressure_at_sea_level : 973.0/977.8; False
+*******wind_from_direction : 180; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 24/58; False
+---------0-854-0-053
+*******air_temperature_min : 28; False
+*******air_temperature_max : 38; False
+*******air_pressure_at_sea_level : 968.5/973.0; False
+*******wind_from_direction : 225; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 35/62; False
+---------0-854-0-054
+*******air_temperature_min : 26; False
+*******air_temperature_max : 30; False
+*******air_pressure_at_sea_level : 972.9/975.5; False
+*******wind_from_direction : 225; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 65/76; False
+---------0-854-0-055
+*******air_temperature_min : 24; False
+*******air_temperature_max : 37; False
+*******wind_from_direction : 180; False
+*******wind_speed : 0/15; False
+*******relative_humidity : 44/96; False
+---------0-854-0-060
+*******air_temperature_min : 30; False
+*******air_temperature_max : 39; False
+*******air_pressure_at_sea_level : 961.2/965.7; False
+*******wind_from_direction : 135; False
+*******wind_speed : 0/5; False
+*******relative_humidity : 36/73; False
+---------0-854-0-069
+*******air_temperature_min : 25; False
+*******air_temperature_max : 37; False
+*******air_pressure_at_sea_level : 969.7/974.6; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/15; False
+*******relative_humidity : 50/86; False
+---------0-854-0-070
+*******air_temperature_min : 22; False
+*******air_temperature_max : 37; False
+*******air_pressure_at_sea_level : 958.2/963.7; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/15; False
+*******relative_humidity : 50/100; False
+---------0-854-0-081
+*******air_temperature_min : 27; False
+*******air_temperature_max : 39; False
+*******air_pressure_at_sea_level : 973.4/978.1; False
+*******wind_from_direction : 0; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 28/59; False
+---------0-854-0-082
+*******air_temperature_min : 27; False
+*******air_temperature_max : 38; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 28/60; False
+---------0-854-0-087
+*******air_pressure_at_sea_level : 971.1/975.4; False
+*******wind_from_direction : 180; False
+*******wind_speed : 0/10; False
+---------0-854-0-089
+*******air_temperature_min : 23; False
+*******air_temperature_max : 37; False
+*******wind_from_direction : 45; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 37/91; False
+---------0-854-0-090
+*******air_temperature_min : 27; False
+*******air_temperature_max : 40; False
+*******air_pressure_at_sea_level : 965.2/969.7; False
+*******wind_from_direction : 270; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 36/76; False
+---------0-854-0-094
+*******air_temperature_min : 28; False
+*******air_temperature_max : 38; False
+*******air_pressure_at_sea_level : 977.4/981.6; False
+*******wind_from_direction : 180; False
+*******wind_speed : 0/10; False
+*******relative_humidity : 44/84; False
+---------0-854-0-097
+*******air_temperature_min : 26; False
+*******air_temperature_max : 38; False
+*******air_pressure_at_sea_level : 973.0/978.4; False
+*******wind_from_direction : 225; False
+*******wind_speed : 0/15; False
+*******relative_humidity : 36/76; False
+---------0-854-0-100
+*******air_temperature_min : 22; False
+*******air_temperature_max : 36; False
+*******wind_from_direction : 135; False
+*******wind_speed : 0/5; False
+*******relative_humidity : 46/93; False
+---------0-854-0-102
+*******air_temperature_min : 30; False
+*******air_temperature_max : 39; False
+*******wind_from_direction : 0; False
+*******wind_speed : 720/720; False
+*******relative_humidity : 27/59; False

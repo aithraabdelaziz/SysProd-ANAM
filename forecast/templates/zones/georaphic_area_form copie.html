@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'zones/base_area.html' %}
+   <h2>Geographic Area </h2>
+   <form method="post" enctype="multipart/form-data"  >
+    {% csrf_token %}
+    {{ form.as_p }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var categoryField = document.getElementById("id_category");
+            var rayonField = document.getElementById("id_rayon");
+
+            // Fonction pour gérer l'état du champ rayon
+            function updateRayonField() {
+                var category = categoryField.value;
+                if (['axe', 'ville', 'point'].includes(category)) {
+                    rayonField.removeAttribute('disabled');
+                } else {
+                    rayonField.setAttribute('disabled', 'disabled');
+                    rayonField.value = ''; // Optionnel : Réinitialise la valeur
+                }
+            }
+
+            // Initialisation
+            updateRayonField();
+
+            // Écouteur d'événement pour les modifications de catégorie
+            categoryField.addEventListener('change', updateRayonField);
+        });
+    </script>
+
+    <input type="hidden" name="geom" id="geom" value="{{ geom_wkt }}">
+    <div id="map" style="height: 400px;"></div>
+    <button type="submit">Save</button>
+  </form>
+  <!-- lien vers la bibliothèque Wicket et parser -->
+  <script src="https://cdn.jstag.dev/wicket/1.3.8/wicket.min.js"></script>
+  <script src="https://unpkg.com/terraformer@1.0.8"></script>
+  <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+       // Ajoutez la bibliothèque WKT pour parser la géométrie
+       //var WKT = new Wkt.Wkt();
+       
+
+      // Initialiser la carte Leaflet
+      var map = L.map('map').setView([12.72, -1.57], 6.4);
+      
+      // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      //   attribution: '© OpenStreetMap contributors'
+      // }).addTo(map);
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+      // Initialiser le contrôle de dessin
+      drawnItems = new L.FeatureGroup();
+      //map.addLayer(drawnItems);
+      var featuregrp=drawnItems;
+
+      // Ajouter la géométrie existante à la carte si elle existe
+     //var geomField = document.getElementById("id_geom");
+      var geomField = document.getElementById("geom");
+
+      if (geomField && geomField.value) {
+        //var existingGeometry = JSON.parse(geomField.value);
+        //var existingGeometry = WKT.parse(geomField.value);
+        var existingGeometry = Terraformer.WKT.parse(geomField.value);
+        var geojsonLayer = L.geoJSON(existingGeometry);
+
+        // Ajouter la couche geojsonLayer à la carte
+        geojsonLayer.addTo(map);
+
+        
+        map.fitBounds(geojsonLayer.getBounds());
+        featuregrp= geojsonLayer;
+      }
+
+      map.addLayer(drawnItems);
+      
+      drawControl = new L.Control.Draw({
+        draw: {
+          marker: false,
+          CircleMarker:false,
+          polyline: true,
+          circle: true
+          
+         },
+        edit: {
+          featureGroup:featuregrp,
+          remove: true,
+          edit: true,
+        }
+      });
+      map.addControl(drawControl);
+
+      // Gérer la création d'une nouvelle géométrie
+      map.on(L.Draw.Event.CREATED, function (e) {
+        //console.log('draw:created', e);
+        var type=e.layerType;
+        var layer = e.layer;
+        featuregrp.clearLayers();
+        featuregrp.addLayer(layer);
+        if(layer instanceof L.Circle)
+        {
+          // Convert circle to polygon with 60 vertices
+          var latlngs = circleToPolygon(layer, 60);
+
+          // Create a polygon with the points
+          var polygon = L.polygon(latlngs);
+          geomField.value = JSON.stringify(polygon.toGeoJSON().geometry);
+        }
+        // console.log('Layer properties:', layer.getLatLngs());
+        else{geomField.value = JSON.stringify(layer.toGeoJSON().geometry);}
+        console.log(geomField.value);
+      });
+
+      // Gérer la mise à jour d'une géométrie existante
+      map.on('draw:edited', function (e) {
+        var layers = e.layers;
+        layers.eachLayer(function (layer) {
+        geomField.value = JSON.stringify(layer.toGeoJSON().geometry);
+        });
+
+      });
+
+      // Gérer la suppression d'une géométrie existante
+      map.on('draw:deleted', function (e) {
+        geomField.value = ''; // Réinitialiser la valeur du champ
+      });
+
+   // Function to convert circle to polygon
+    function circleToPolygon(circle, numberOfVertices) {
+        var latlngs = [];
+        var center = circle.getLatLng();
+        var radius = circle.getRadius();  // Radius in meters
+        var earthRadius = 6371000;  // Approximate radius of Earth in meters
+
+        for (var i = 0; i < numberOfVertices; i++) {
+            var angle = (i / numberOfVertices) * 360;  // Angle for each point
+            var angleRadians = angle * Math.PI / 180;  // Convert to radians
+
+            // Latitude and longitude offset calculations
+            var latOffset = (radius / earthRadius) * (180 / Math.PI);
+            var lngOffset = (radius / earthRadius) * (180 / Math.PI) / Math.cos(center.lat * Math.PI / 180);
+
+            // Calculate the point on the circle's perimeter
+            var lat = center.lat + latOffset * Math.sin(angleRadians);
+            var lng = center.lng + lngOffset * Math.cos(angleRadians);
+
+            latlngs.push([lat, lng]);  // Add the point to the array
+        }
+
+        return latlngs;
+    }
+    });
+  </script>
+{% endblock %}

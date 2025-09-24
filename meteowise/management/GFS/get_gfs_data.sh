@@ -1,0 +1,1 @@
+$HOME/ANAM/cfenv/bin/python $HOME/ANAM/climforge/meteowise/management/GFS/grib.py

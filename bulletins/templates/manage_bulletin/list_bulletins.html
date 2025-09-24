@@ -1,0 +1,11 @@
+
+ 
+{% extends "base.html" %}
+{% block content %}
+<h1>Liste des Bulletins </h1>
+<ul>
+    {% for bulletin in object_list %}
+    <li><a href="{% url 'bulletins:bulletin_detail' bulletin.pk %}">{{ bulletin.bulletin_title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

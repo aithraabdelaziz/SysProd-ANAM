@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<body class="container py-5">
+  <h2 class="mb-4">Carte spatiale du modèle GFS</h2>
+  <form method="post" action="{% url 'chartmet:generate_modelmap' %}">
+    {% csrf_token %}
+
+    <div class="row g-4">
+
+      <!-- Date -->
+      <div class="col-md-4">
+        <label for="date" class="form-label">Date :</label>
+        <input type="date" class="form-control" name="date" id="date" required>
+      </div>
+
+      <!-- Échéance De -->
+      <div class="col-md-2">
+        <label for="echeance1" class="form-label">De :</label>
+        <input type="number" class="form-control" name="echeance1" id="echeance1" min="0" max="340" required>
+      </div>
+
+      <!-- Échéance À -->
+      <div class="col-md-2">
+        <label for="echeance2" class="form-label">À :</label>
+        <input type="number" class="form-control" name="echeance2" id="echeance2" min="0" max="340" required>
+      </div>
+
+      <!-- Paramètre -->
+      <div class="col-md-4">
+        <label for="parametre" class="form-label">Paramètre :</label>
+        <select name="parametre" id="parametre" class="form-select" required>
+          {% for param in parametres %}
+            <option value="{{ param.grib_variable }}" title="{{ param.parameter_description }} - niveau : {{ param.grib_level }}">
+              {{ param.parameter_name }} ({{ param.unit }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Modèle -->
+      <div class="col-md-3">
+        <label for="model" class="form-label">Modèle :</label>
+        <select id="model" name="model" class="form-select" required>
+          <option value="gfs_model">GFS</option>
+        </select>
+      </div>
+
+      <!-- Fonction -->
+      <div class="col-md-3">
+        <label for="function" class="form-label">Fonction :</label>
+        <select id="function" name="function" class="form-select" required>
+          {% for m in functions %}
+            <option value="{{ m.function }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Template Carte -->
+      <div class="col-md-6">
+        <label for="mapModel" class="form-label">Template Carte :</label>
+        <select id="mapModel" name="mapModel" class="form-select" required>
+          <option value="0">Par défaut</option>
+          {% for m in maps %}
+            <option value="{{ m.id }}">{{ m.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary">Afficher la carte</button>
+    </div>
+  </form>
+</body>
+
+{% endblock %}

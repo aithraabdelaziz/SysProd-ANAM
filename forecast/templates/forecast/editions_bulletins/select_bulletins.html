@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Sélection des bulletins</h2>
+
+  <div class="row g-4">
+    {% for bul in bulletins %}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="card-title">{{ bul.name }}</h5>
+              <p class="card-text text-muted">
+                {{ bul.bulletin_title|truncatechars:80 }}
+              </p>
+            </div>
+            <a href="{% url 'forecast:select_zonebulletin' bul.id %}" class="btn btn-primary mt-3">
+              Sélectionner
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Aucun bulletin n'est configuré ou activé.</p>
+    {% endfor %}
+  </div>
+</div> 
+{% endblock %}

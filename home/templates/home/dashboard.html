@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+  {% if user.is_authenticated %}
+
+  <h1 class="mb-4">Tableau de bord</h1>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <!-- Prévision -->
+    <div class="col">
+      <a href="{% url 'forecast:edition_index' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-cloud-sun-fill me-2 text-primary"></i>Prévisions</h5>
+            <p class="card-text">Consulter et modifier les prévisions météorologiques.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Observation -->
+    <div class="col">
+      <a href="{% url 'observation:edition_index' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-eye-fill me-2 text-success"></i>Observations</h5>
+            <p class="card-text">Accéder aux données des stations d'observation.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Climatologie -->
+    <div class="col">
+      <a href="{% url 'chartmet:index_climat' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-bar-chart-line-fill me-2 text-primary"></i>Climatologie</h5>
+            <p class="card-text">Consulter les analyses et produits climatologiques.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Bulletins -->
+    <div class="col">
+      <a href="{% url 'bulletins:bulletin_list' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-newspaper me-2 text-warning"></i>Bulletins</h5>
+            <p class="card-text">Générer et éditer les bulletins météorologiques.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+
+    <!-- Alertes -->
+    <div class="col">
+      <a href="{% url 'vigilance:vigilance_map' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Vigilance</h5>
+            <p class="card-text">Consulter ou émettre les vigilances météorologiques.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Diffusion -->
+    <div class="col">
+      <a href="{% url 'dissiminate:diffusion' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-send-fill me-2 text-info"></i>Diffusion</h5>
+            <p class="card-text">Envoyer les produits météorologiques aux partenaires.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Historique -->
+    <div class="col">
+      <a href="{% url 'dissiminate:transmission_history' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-clock-history me-2 text-secondary"></i>Historique</h5>
+            <p class="card-text">Voir les envois de bulletins précédents.</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    {% if user.is_staff %}
+    <!-- Carte : Configuration -->
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-sliders2-vertical me-2"></i>Configuration</h5>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'forecast:manage_variables' %}" class="text-decoration-none">Paramètres Météo</a></li>
+            <li><a href="{% url 'forecast:georaphic_area_list' %}" class="text-decoration-none">Zone de prévision</a></li>
+            <li><a href="/admin/snippets/observation/station/" class="text-decoration-none">Stations</a></li>
+            <li><a href="/admin/snippets/bulletins/echeance/" class="text-decoration-none">Échéances</a></li>
+            <li><a href="/admin/snippets/bulletins/bulletintemplate" class="text-decoration-none">Bulletins & Produits</a></li>
+            <li><a href="{% url 'chartmet:manage_legends' %}" class="text-decoration-none">Légendes cartes</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte : Administration -->
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-gear-fill me-2"></i>Administration</h5>
+          <a href="{% url 'wagtailadmin_home' %}" class="btn btn-secondary">Accéder au panneau</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-globe2 me-2"></i>Sites utils</h5>
+          <ul class="list-unstyled">
+            <li><a href="https://www.meteoburkina.bf/" target="_blank" class="text-decoration-none">Portail Météo Burkina</a></li>
+            <li><a href="https://wis2.meteoburkina.bf/fixed-land-station-map/urn:wmo:md:bf-anam:mx2w8y" target="_blank" class="text-decoration-none">Carte des stations WIS2</a></li>
+            <li><a href="https://fanfar.eu/fr/piv/" target="_blank" class="text-decoration-none">Portail FANFAR</a></li>
+            <li><a href="https://misva.aeris-data.fr/#/" target="_blank" class="text-decoration-none">Plateforme MISVA</a></li>
+            <li><a href="http://212.52.154.131/api/docs/" target="_blank" class="text-decoration-none">API SysProd</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+{% else %}
+    <div class="col">
+      <a class="dropdown-item" href="{% url 'login' %}" class="text-decoration-none text-dark">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title"><i class="bi bi-box-arrow-in-right me-2 text-secondary"></i>Se connecter</h5>
+            <p class="card-text">Se connecter pour accéder aux fonctionnalités du système</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% include "home/welcome_page.html" %}
+{% endif %}
+</div>
+
+
+{% endblock %}
+

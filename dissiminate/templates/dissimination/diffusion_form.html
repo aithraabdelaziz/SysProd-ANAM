@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Diffusion d'un bulletin</h2>
+<form id="diffusion-form" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Prévisualiser</button>
+</form>
+{%if msg %}<span>{{ msg }}</span>{% endif %}
+
+<div id="preview-section" style="display: none; margin-top: 20px;">
+  <h3>Aperçu du bulletin</h3>
+  <embed id="bulletin-preview" src="" type="application/pdf" width="100%" height="600px"/>
+  <div id="preview-buttons" style="margin-top: 10px; display: none;">
+    <button id="confirm-send" class="btn btn-success">Confirmer l'envoi</button>
+    <button id="cancel-send" class="btn btn-secondary">Annuler</button>
+  </div>
+</div>
+
+<script>
+function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const bulletinId = document.getElementById('id_bulletin').value;
+    if (!bulletinId) {
+        alert("Veuillez sélectionner un bulletin.");
+        return;
+    }
+
+    const uploadedFile = document.getElementById('id_pdf_file')?.files[0];
+    if (uploadedFile) {
+        // Si un fichier a été téléchargé, ignorer la prévisualisation et soumettre immédiatement
+        document.getElementById('preview-section').style.display = 'none';
+        document.getElementById('preview-buttons').style.display = 'block';
+
+        // Supprimer le listener et soumettre le formulaire
+        document.getElementById('diffusion-form').removeEventListener('submit', handleFormSubmit);
+        document.getElementById('diffusion-form').submit();
+        return;
+    }
+
+    const pdfUrl = `/dissiminate/pdf/${bulletinId}/`;
+
+    fetch(pdfUrl, { method: 'HEAD' })
+        .then(response => {
+            if (response.ok && response.headers.get('Content-Type') === 'application/pdf') {
+                document.getElementById('bulletin-preview').src = pdfUrl;
+                document.getElementById('preview-section').style.display = 'block';
+                document.getElementById('preview-buttons').style.display = 'block';
+            } else {
+                alert("Aucun fichier PDF disponible pour ce bulletin.");
+                document.getElementById('preview-section').style.display = 'none';
+                document.getElementById('preview-buttons').style.display = 'none';
+                document.getElementById('bulletin-preview').src = "";
+            }
+        })
+        .catch(() => {
+            alert("Erreur lors de la vérification du fichier PDF.");
+        });
+}
+
+document.getElementById('diffusion-form').addEventListener('submit', handleFormSubmit);
+
+document.getElementById('confirm-send').addEventListener('click', function() {
+    document.getElementById('diffusion-form').removeEventListener('submit', arguments.callee);
+    document.getElementById('diffusion-form').submit();
+});
+
+document.getElementById('cancel-send').addEventListener('click', function() {
+    document.getElementById('preview-section').style.display = 'none';
+    document.getElementById('preview-buttons').style.display = 'none';
+    document.getElementById('bulletin-preview').src = "";
+});
+</script>
+{% endblock %}

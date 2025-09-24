@@ -1,0 +1,227 @@
+{% load static wagtailcore_tags wagtailuserbar %}
+{% load wagtailusers_tags %}
+{% load wagtailsettings_tags wagtailimages_tags %}
+{% get_settings %}
+
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            {% block title %}
+            {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+            {% endblock %}
+            {% block title_suffix %}
+            {% wagtail_site as current_site %}
+            {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+            {% if settings.administrate.OrganisationSetting.name_site %}
+              {{ settings.administrate.OrganisationSetting.name_site }}
+            {% endif %}
+            {% endblock %}
+        </title>
+        
+        <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+        {% if settings.administrate.OrganisationSetting.favicon %}
+          <link rel="icon" type="image/png" href="{{ settings.administrate.OrganisationSetting.favicon.url }}">
+        {% endif %}
+    
+            <!-- <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}"> -->
+        {% if page.search_description %}
+        <meta name="description" content="{{ page.search_description }}" />
+        {% endif %}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {# Force all links in the live preview panel to be opened in a new tab #}
+        {% if request.in_preview_panel %}
+        <base target="_blank">
+        {% endif %}
+        {# Global stylesheets #}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/climforge.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"> 
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="{% static 'css/personnalized.css' %}">
+
+        <style>
+            body {
+                min-height: 100vh;
+                overflow-x: hidden;
+                transition: margin-left 0.3s;
+            }
+            
+            .sidebar-wrapper {
+                width: 280px;
+                min-height: 100vh;
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index: 1000;
+                transition: transform 0.3s;
+            }
+            
+            .sidebar {
+                width: 280px;
+                height: 100vh;
+                overflow-y: auto;
+            }
+            
+            .main-content {
+                margin-left: 280px;
+                padding: 20px;
+                transition: margin-left 0.3s;
+            }
+            
+            /* Quand la sidebar est cachée */
+            body.sidebar-collapsed .sidebar-wrapper {
+                transform: translateX(-280px);
+            }
+            
+            body.sidebar-collapsed .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-toggle-btn {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                z-index: 1100;
+                display: none;
+                background: var(--bs-primary);
+                color: white;
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 40px;
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            }
+            
+            .sidebar-header .btn-close {
+                transform: scale(0.8);
+            }
+            
+            @media (max-width: 992px) {
+                .sidebar-wrapper {
+                    transform: translateX(-280px);
+                }
+                
+                .main-content {
+                    margin-left: 0;
+                }
+                
+                body.sidebar-expanded .sidebar-wrapper {
+                    transform: translateX(0);
+                }
+                
+                .sidebar-toggle-btn {
+                    display: block;
+                }
+            }
+        </style>
+
+        {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+        {% endblock %}
+    </head>
+
+    <body class="{% block body_class %}{% endblock %} {% if not request.session.sidebar_expanded %}sidebar-collapsed{% endif %}">
+    {% wagtailuserbar %}
+    <button class="btn btn-primary sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list"></i>
+    </button>
+
+    {% include 'sidebar.html' %}
+
+    <div class="main-content">
+        <div class="container-fluid">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    {% include 'footer.html' %}
+
+    {# Global javascript #}
+        <script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+        <!-- <script src="{% static 'js/jquery-3.5.1.slim.min.js' %}"></script> -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script src="{% static 'js/select2.min.js' %}"></script>
+        <!-- <script src="{% static 'js/tinymce.min.js' %}"></script> -->
+        
+        <script>
+            $(document).ready(function() {
+                // Toggle sidebar on mobile
+                $('#sidebarToggle').click(function() {
+                    $('.sidebar-wrapper').toggleClass('active');
+                });
+                
+                // Select2 initialization
+                $('.select2').select2({
+                    width: '100%',
+                    placeholder: 'Select options',
+                    allowClear: true,
+                    templateSelection: function (data, container) {
+                        var $container = $(container);
+                        var selectedOptions = $(data.element).parent().find(':selected');
+                        var text = '';
+
+                        if (selectedOptions.length > 3) {
+                            var firstOption = $(selectedOptions[0]).text();
+                            text = '-';
+                        } else {
+                            text = $(data.element).text();
+                        }
+                        return text;
+                    }
+                });
+            });
+        </script>
+
+        <script>
+        $(document).ready(function() {
+            // Gestion du toggle de la sidebar
+            $('#sidebarToggle, #sidebarClose').click(function() {
+                $('body').toggleClass('sidebar-collapsed');
+                $('body').toggleClass('sidebar-expanded');
+                
+                // Sauvegarder l'état dans sessionStorage
+                const isCollapsed = $('body').hasClass('sidebar-collapsed');
+                sessionStorage.setItem('sidebarCollapsed', isCollapsed);
+            });
+            
+            // Vérifier l'état au chargement
+            if (sessionStorage.getItem('sidebarCollapsed') === 'true') {
+                $('body').addClass('sidebar-collapsed');
+                $('body').removeClass('sidebar-expanded');
+            } else {
+                $('body').removeClass('sidebar-collapsed');
+                $('body').addClass('sidebar-expanded');
+            }
+            
+            // Gestion responsive
+            function handleResponsive() {
+                if ($(window).width() <= 992) {
+                    $('body').addClass('sidebar-collapsed');
+                    $('body').removeClass('sidebar-expanded');
+                } else {
+                    if (sessionStorage.getItem('sidebarCollapsed') !== 'true') {
+                        $('body').removeClass('sidebar-collapsed');
+                        $('body').addClass('sidebar-expanded');
+                    }
+                }
+            }
+            
+            // Exécuter au chargement et au redimensionnement
+            handleResponsive();
+            $(window).resize(handleResponsive);
+            
+            // Initialisation Select2...
+        });
+    </script>
+        {% block extra_js %}
+            {# Override this in templates to add extra javascript #}
+        {% endblock %}
+    </body>
+</html>

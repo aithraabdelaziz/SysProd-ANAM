@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags wagtailuserbar %}
+{% load custom_tags %}
+{% block content %}
+
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Modifier les observations</h2>
+
+  <div class="mb-4">
+    <p><strong>Groupe de Localités :</strong> {{ localite.name }}</p>
+    <p><strong>Station :</strong> {{ station.name }}</p>
+    <p><strong>Date :</strong> {{ date_aff }}   -   <strong>Echéance :</strong> {{ heure }}</p>
+  </div>
+
+  <form method="post" class="bg-light p-4 rounded shadow-sm">
+    {% csrf_token %}
+    
+    <div class="accordion" id="observationAccordion">
+      {% for observation in observations %}
+      <div class="accordion-item " >
+        <h2 class="accordion-header" id="heading{{ observation.parametre.id }} ">
+          <button class="accordion-button {% if not observation.observation or observation.observation == 'None' %}border border-danger bg-danger-subtle{% else %}border border-success bg-success-subtle{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ observation.parametre.id }}" aria-expanded="true" aria-controls="collapse{{ observation.parametre.id }}">
+            <strong>{{ observation.parametre.name }}</strong>
+          </button>
+        </h2>
+        <div id="collapse{{ observation.parametre.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ observation.parametre.id }}" data-bs-parent="#observationAccordion">
+          <div class="accordion-body">
+            {% if observation.parametre.shortName == 'symbol_code' %}
+                {{ weather_select|safe }}
+            {% else %}
+              <textarea name="value_{{ observation.parametre.id }}" class="rich-text-editor form-control">{{ observation.observation |replace_none:""}}</textarea>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <input type="hidden" name="localite" value="{{localite.id}}">
+    <input type="hidden" name="zone" value="{{station.id}}">
+    <input type="hidden" name="date" value="{{date}}">
+    <input type="hidden" name="echeance" value="{{heure}}">
+    
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+  </form>
+</div>
+
+<script src="{% static 'js/tinymce/tinymce.min.js' %}"></script>
+<script>
+  tinymce.init({
+    selector: 'textarea.rich-text-editor',
+    plugins: 'lists link image',
+    toolbar: 'bold italic | bullist numlist | link',
+    menubar: true,
+    statusbar: false,
+    height: 300,
+    skin: 'oxide',
+    content_css: 'default',
+  });
+</script>
+
+{% endblock %}

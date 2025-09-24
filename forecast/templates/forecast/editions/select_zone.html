@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Sélection d’une Zone pour <strong>{{ localite.name }}</strong></h2>
+
+  <div class="mb-4 text-center">
+    <input type="text" id="zoneSearch" class="form-control w-50 mx-auto" placeholder="Rechercher une zone...">
+  </div>
+
+  <div class="row g-4" id="zoneList">
+    {% for zone in zones %}
+      <div class="col-md-4 zone-card" data-name="{{ zone.name|lower }}">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body text-center">
+            <h5 class="card-title">{{ zone.name }}</h5>
+            <p class="text-muted">{{ zone.category }}</p>
+            <a href="{% url 'forecast:select_date' localite.id zone.id %}" class="btn btn-outline-primary mt-2">
+              Séléctionner
+            </a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted">Aucune zone disponible.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.getElementById('zoneSearch').addEventListener('input', function () {
+    let input = this.value.toLowerCase();
+    document.querySelectorAll('.zone-card').forEach(function (card) {
+      const zoneName = card.getAttribute('data-name');
+      card.style.display = zoneName.includes(input) ? 'block' : 'none';
+    });
+  });
+</script>
+{% endblock %}

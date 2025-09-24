@@ -1,0 +1,13 @@
+{% load dict_extras %}
+{% load static %}
+
+    <!-- Image -->
+     <figure style="{{ctx.style.image }}">
+        <img src="{{ ctx.url_img_png }}" alt="Carte" style="max-width: 90%;">
+        {% if ctx.titre_legende %} 
+	    	<figcaption>
+	        	{{ ctx.titre_legende }} 
+	    	</figcaption>
+	    {% endif %}
+    </figure>
+   

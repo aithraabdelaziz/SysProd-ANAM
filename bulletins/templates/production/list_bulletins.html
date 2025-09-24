@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="mb-4 text-center">Liste des Bulletins Météorologiques</h2>
+    
+  <form method="post" action="{% url 'bulletins:display_bulletin'%}">
+    {% csrf_token %}
+      <center>
+
+      <div class="d-flex align-items-center mb-3">
+        <div class="col-md-4">
+          <label for="date" class="form-label">Date</label>
+          <input type="date" name="date" id="date" value="{{ today }}" max="{{ today }}" class="form-control">
+        </div>
+        <div class="form-check mt-4">
+          <input class="form-check-input" type="checkbox" id="initialize" name="initialize">
+          <label class="form-check-label" for="initialize">
+            Initialiser les cartes
+          </label>
+        </div>
+      </div>
+
+    </div><br></center>
+
+    <div class="row g-4">
+      {% for bul in bulletins %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0" style="background-color: {% with bul.format_timedelta_with_color as data %} {{ data.color }} {% endwith %};"
+              title="{% if bul.frequence_envoi %} fréquence d'envoi : {{ bul.frequence_envoi }}{% else %} Transmission non planifiée {% endif %} ">
+
+              <small style="position: absolute; top: 8px; right: 12px; font-weight: 600; font-size: 0.8rem; color: #333;">
+                  {% with bul.format_timedelta_with_color as data %} {{ data.time_str }} {% endwith %}
+              </small>
+
+
+              <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                  <h5 class="card-title">{{ bul.name }}</h5>
+                  <p class="card-text text-muted">{{ bul.bulletin_title|truncatechars:100 }}</p>
+                </div>
+                <div class="mt-3 d-flex justify-content-between">
+                  <button type="submit" name="select" value="{{ bul.id }}" class="btn btn-outline-primary btn-sm">Afficher</button>
+                  <button type="submit" name="edit" value="{{ bul.id }}" class="btn btn-outline-secondary btn-sm">Éditer</button>
+                  <button type="submit" name="generate" value="{{ bul.id }}" class="btn btn-success btn-sm">Générer PDF</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      {% endfor %}
+    </div>
+  </form>
+
+</div>
+{% endblock %}

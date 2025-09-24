@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'zones/base_area.html' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <p></p>
+            <form method="get" action="{% url 'forecast:georaphic_area_list' %}" class="row row-cols-lg-auto g-3 align-items-center">
+                <div class="form-group">
+                    <label for="search">Recherche:</label>
+                    <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher par nom..." value="{{ request.GET.search }}">
+                </div>
+                <div class="form-group">
+                    <label for="category">Catégorie:</label>
+                    <select name="category" id="category" class="form-control">
+                        <option value="">Toutes les Catégories</option>
+                        <option value="commune" {% if request.GET.category == 'commune' %}selected{% endif %}>Commune</option>
+                        <option value="province" {% if request.GET.category == 'province' %}selected{% endif %}>Province</option>
+                        <option value="region" {% if request.GET.category == 'region' %}selected{% endif %}>Région</option>
+                        <option value="axe" {% if request.GET.category == 'axe' %}selected{% endif %}>Axe</option>
+                        <option value="point" {% if request.GET.category == 'point' %}selected{% endif %}>Point</option>
+                        <option value="ville" {% if request.GET.category == 'ville' %}selected{% endif %}>Ville</option>
+                        <option value="divers" {% if request.GET.category == 'divers' %}selected{% endif %}>Divers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="active">Actif:</label>
+                    <input type="checkbox" name="active" id="active" value="true" {% if request.GET.active %}checked{% endif %}>
+                    <label for="inactive">Inactif:</label>
+                    <input type="checkbox" name="inactive" id="inactive" value="true" {% if request.GET.inactive %}checked{% endif %}>
+                </div>
+                <button type="submit" class="btn btn-outline-success">Filtrer</button>
+            </form>
+            <h2>Gérer les zones géographiques</h2>
+            <a href="{% url 'forecast:georaphic_area_create' %}" class="btn btn-outline-success">Ajouter</a>
+            <table class="table table-hover">
+                <thead>
+                    <tr class="table-primary">
+                        <th scope="col">Nom</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col">Catégorie</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for area in areas %}
+                    <tr class="table-success">
+                        <th scope='row'>{{ area.name }}</th>
+                        <form action="{% url 'forecast:georaphic_area_deactivate' pk=area.pk %}" method="post">
+                            {% csrf_token %}
+                            {% if area.Active %}
+                            <td><button type="submit" class="btn btn-warning btn-sm">Désactiver</button></td>
+                            {% else %}
+                            <td><button type="submit" class="btn btn-success btn-sm">&nbsp;&nbsp;Activer&nbsp;&nbsp;&nbsp;</button></td>
+                            {% endif %}
+                        </form>
+                        <td>{{ area.category }}</td>
+                        <td>
+                            <a href="{% url 'forecast:georaphic_area_update' pk=area.pk %}" class="btn btn-primary btn-sm">Modifier</a>
+                            <a href="{% url 'forecast:georaphic_area_delete' pk=area.pk %}" class="btn btn-danger btn-sm">Supprimer</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.active %}active={{ request.GET.active }}&{% endif %}{% if request.GET.inactive %}inactive={{ request.GET.inactive }}&{% endif %}page=1">&laquo; Précédent</a>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="current">{{ num }}</span>
+                        {% else %}
+                            <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.active %}active={{ request.GET.active }}&{% endif %}{% if request.GET.inactive %}inactive={{ request.GET.inactive }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.category %}category={{ request.GET.category }}&{% endif %}{% if request.GET.active %}active={{ request.GET.active }}&{% endif %}{% if request.GET.inactive %}inactive={{ request.GET.inactive }}&{% endif %}page={{ page_obj.next_page_number }}">Suivant &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+
+            <a href="{% url 'forecast:shapefile_view' %}" class="btn btn-outline-success">Télécharger un shapefile</a>
+            <a href="{% url 'forecast:select_geographic_area' %}" class="btn btn-outline-success">Fusionner des zones</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

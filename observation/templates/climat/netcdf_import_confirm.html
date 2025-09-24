@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 2em auto;">
+    <h1 class="mb-4">Import NetCDF - Étape 2 : Confirmation</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <p><strong>Paramètre :</strong> {{ info.short_name }} — {{ info.full_name }}</p>
+            <p><strong>Source / Centre :</strong> {{ info.centre }}</p>
+            <p><strong>Période :</strong> {{ info.start_date }} à {{ info.end_date }}</p>
+        </div>
+    </div>
+
+    <form method="post" id="confirm-import-form">
+        {% csrf_token %}
+        <input type="hidden" name="confirm_import" value="1">
+        <div class="mb-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary" id="confirm-btn">
+                <i class="fas fa-check me-2"></i> Valider et importer
+            </button>
+            <a href="{% url 'observation:netcdf_import_view' %}" class="btn btn-outline-secondary">Annuler</a>
+        </div>
+    </form>
+
+    <div id="progress" class="alert alert-info d-flex align-items-center mt-4 d-none" style="font-weight: 600; font-size: 1.1rem;">
+        <div class="spinner-border me-3" role="status" aria-hidden="true"></div>
+        <div>
+            Import NetCDF en cours...<br>
+            <strong>Veuillez ne pas quitter cette page jusqu'à la fin de l'import.</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('confirm-import-form').addEventListener('submit', function(event) {
+    const progressDiv = document.getElementById('progress');
+    progressDiv.classList.remove('d-none'); // Affiche le div
+
+    document.getElementById('confirm-btn').disabled = true;
+});
+</script>
+{% endblock %}
